@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "products": [
+    {
+      "ref": "2257",
+      "slug": "body-basico-crudo",
+      "name": "Body básico en algodón crudo",
+      "description": null,
+      "availability": "available",
+      "price": 48000,
+      "priceLabel": "Desde $48.000",
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-a.jpg",
+          "alt": "Body básico en algodón crudo",
+          "placeholder": null,
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [{ "name": "Crudo", "hex": "#E7DCC8" }],
+      "sizes": ["0-3m"],
+      "category": "bodies",
+      "collection": "esenciales",
+      "featured": false,
+      "sale": false
+    },
+    {
+      "ref": "2301",
+      "slug": "gorro-tejido-a-mano",
+      "name": "Gorro tejido a mano",
+      "description": null,
+      "availability": "made_to_order",
+      "price": 32000,
+      "priceLabel": null,
+      "images": [],
+      "colors": [{ "name": "Barro", "hex": "#B07C57" }],
+      "sizes": ["única"],
+      "category": "accesorios",
+      "collection": "hechos-a-mano",
+      "featured": false,
+      "sale": false
+    },
+    {
+      "ref": "2288",
+      "slug": "manta-edicion-taller",
+      "name": "Manta de edición del taller",
+      "description": null,
+      "availability": "available",
+      "price": null,
+      "priceLabel": null,
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-b.jpg",
+          "alt": "Manta de edición del taller",
+          "placeholder": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAKAAgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD74ooor589M//Z",
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [{ "name": "Marfil", "hex": "#F5EFE2" }],
+      "sizes": ["única"],
+      "category": "mantas",
+      "collection": "esenciales",
+      "featured": false,
+      "sale": false
+    },
+    {
+      "ref": "2260",
+      "slug": "conjunto-editorial-sage",
+      "name": "Conjunto editorial en sage",
+      "description": null,
+      "availability": "available",
+      "price": 89000,
+      "priceLabel": null,
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-a.jpg",
+          "alt": "Conjunto editorial en sage",
+          "placeholder": null,
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [{ "name": "Sage", "hex": "#A7B39A" }],
+      "sizes": ["0-3m", "3-6m"],
+      "category": "conjuntos",
+      "collection": "editorial",
+      "featured": true,
+      "sale": false
+    },
+    {
+      "ref": "2199",
+      "slug": "saco-en-lana",
+      "name": "Saco en lana",
+      "description": null,
+      "availability": "unavailable",
+      "price": 76000,
+      "priceLabel": null,
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-b.jpg",
+          "alt": "Saco en lana",
+          "placeholder": null,
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [{ "name": "Tinta", "hex": "#2B2622" }],
+      "sizes": ["6-12m"],
+      "category": "abrigo",
+      "collection": "temporada",
+      "featured": false,
+      "sale": false
+    },
+    {
+      "ref": "2312",
+      "slug": "body-linea-de-color",
+      "name": "Body línea de color",
+      "description": null,
+      "availability": "available",
+      "price": 52000,
+      "priceLabel": null,
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-a.jpg",
+          "alt": "Body línea de color",
+          "placeholder": null,
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [
+        { "name": "Crudo", "hex": "#E7DCC8" },
+        { "name": "Barro", "hex": "#B07C57" },
+        { "name": "Sage", "hex": "#A7B39A" }
+      ],
+      "sizes": ["0-3m"],
+      "category": "bodies",
+      "collection": "esenciales",
+      "featured": true,
+      "sale": false
+    },
+    {
+      "ref": "2334",
+      "slug": "pijama-en-algodon",
+      "name": "Pijama en algodón",
+      "description": null,
+      "availability": "made_to_order",
+      "price": 61000,
+      "priceLabel": null,
+      "images": [
+        {
+          "url": "/fixtures/products/placeholder-b.jpg",
+          "alt": "Pijama en algodón",
+          "placeholder": null,
+          "width": 800,
+          "height": 1000
+        }
+      ],
+      "colors": [{ "name": "Marfil", "hex": "#F5EFE2" }],
+      "sizes": ["0-3m", "3-6m", "6-12m", "12-18m"],
+      "category": "pijamas",
+      "collection": "esenciales",
+      "featured": true,
+      "sale": false
+    }
+  ],
+  "categories": [
+    { "slug": "bodies", "name": null },
+    { "slug": "accesorios", "name": null },
+    { "slug": "mantas", "name": null },
+    { "slug": "conjuntos", "name": null },
+    { "slug": "abrigo", "name": null },
+    { "slug": "pijamas", "name": null }
+  ],
+  "collections": [
+    { "slug": "esenciales", "title": null },
+    { "slug": "hechos-a-mano", "title": null },
+    { "slug": "editorial", "title": null },
+    { "slug": "temporada", "title": null }
+  ]
+}

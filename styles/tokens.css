@@ -1,0 +1,83 @@
+/*
+ * styles/tokens.css — THE DESIGN-TOKEN CONTRACT (HILITOS-F0-FOUNDATION §7.1)
+ *
+ * SHARED / FROZEN NAMES — Violeta-owned.
+ *   - Token NAMES and ROLES are frozen. Renaming or removing a token is a seam
+ *     change requiring re-review (Violeta).
+ *   - Token VALUES are seeded creative defaults, tunable by Violeta/Mónica
+ *     without breaking consumers.
+ *   - Consumers (Amarillo/Verde) read these variables (directly or via the
+ *     Tailwind theme mapping in app/globals.css) and MUST NOT hardcode raw
+ *     hex/size values.
+ *   - This file contains ONLY custom-property definitions. No component
+ *     styling, no resets, no media queries.
+ */
+
+:root {
+  /* ---- Brand color tokens (NAMES FROZEN; values are creative defaults, tunable by Violeta/Mónica) ---- */
+  --marfil:       #F5EFE2; /* primary warm background (ivory) */
+  --crudo:        #E7DCC8; /* secondary raw-natural surface; the solid LQIP placeholder-box tone */
+  --tinta:        #2B2622; /* primary text (ink) */
+  --barro:        #B07C57; /* warm clay accent — DECORATIVE use only */
+  --barro-hondo:  #8A5A38; /* deep clay — INTERACTIVE / AA-critical text & controls (use instead of --barro when AA contrast is required) */
+  --hilo:         #9A8763; /* thread color — thread/stitch motif, hairlines, stitch underlines */
+  --sage:         #A7B39A; /* secondary natural accent */
+  --whatsapp:     #25D366; /* WhatsApp brand green — RESERVED exclusively for WhatsApp actions (exact brand value) */
+
+  /* ---- Functional aliases (foundation-added; documented; keep the reserved semantics) ---- */
+  --surface:      var(--marfil);
+  --surface-raw:  var(--crudo);
+  --text:         var(--tinta);
+  --text-muted:   #6B635A;                 /* derived muted ink — tunable */
+  --hairline:     rgba(43, 38, 34, 0.12);  /* subtle rule/border */
+  --focus-ring:   var(--barro-hondo);      /* AA-critical focus color */
+
+  /* ---- Typography ----
+   * --font-fraunces / --font-hanken-grotesk are provided by next/font in
+   * app/layout.tsx (self-hosted at build time). The var() fallbacks keep these
+   * tokens meaningful even if the loader is absent. */
+  --font-display: var(--font-fraunces, "Fraunces"), Georgia, "Times New Roman", serif;
+  --font-body:    var(--font-hanken-grotesk, "Hanken Grotesk"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --text-xs:      0.75rem;
+  --text-sm:      0.875rem;
+  --text-base:    1rem;
+  --text-lg:      clamp(1.0625rem, 0.9rem + 0.6vw, 1.125rem);
+  --text-xl:      clamp(1.25rem, 1rem + 1vw, 1.5rem);
+  --text-2xl:     clamp(1.5rem, 1.1rem + 1.6vw, 2rem);
+  --text-3xl:     clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  --text-display: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0em;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
+  /* ---- Spacing (4px base) ---- */
+  --space-0: 0; --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
+  --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
+  --container-max:    80rem;                       /* 1280px */
+  --container-gutter: clamp(1rem, 4vw, 2rem);
+  --section-y:        clamp(3rem, 8vw, 6rem);      /* vertical section rhythm */
+
+  /* ---- Radii ---- */
+  --radius-none: 0; --radius-sm: 0.25rem; --radius-md: 0.5rem; --radius-lg: 0.875rem; --radius-pill: 999px;
+
+  /* ---- Elevation (soft, warm, restrained) ---- */
+  --shadow-sm: 0 1px 2px rgba(43, 38, 34, 0.06);
+  --shadow-md: 0 4px 16px rgba(43, 38, 34, 0.08);
+  --shadow-lg: 0 12px 32px rgba(43, 38, 34, 0.10);
+
+  /* ---- Motion (tokens only; the reduced-motion IMPLEMENTATION is Amarillo's) ---- */
+  --duration-fast: 150ms; --duration-base: 250ms; --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+  --hover-scale:   1.02; /* image hover scale, per blueprint */
+}
