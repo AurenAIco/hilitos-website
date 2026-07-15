@@ -1,0 +1,40 @@
+// components/layout/Header.tsx — AMARILLO. Shared public header: wordmark,
+// desktop nav, WhatsApp CTA (reserved green), accessible mobile nav.
+// Server Component; interactivity lives only in <MobileNav/> (client).
+import Link from "next/link";
+import { NAV_ITEMS } from "./nav-items";
+import { MobileNav } from "./MobileNav";
+import { WhatsAppCTA } from "./WhatsAppCTA";
+
+export function Header() {
+  return (
+    <header className="sticky top-0 z-50 border-b border-hairline bg-marfil/92 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 w-full max-w-page items-center justify-between gap-4 px-[var(--container-gutter)]">
+        <Link
+          href="/"
+          className="font-display text-2xl font-semibold leading-none tracking-[var(--tracking-tight)] text-tinta"
+          aria-label="Hilitos — inicio"
+        >
+          Hilitos
+        </Link>
+
+        <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="stitch-underline py-2 text-sm text-tinta transition-colors duration-[var(--duration-fast)] hover:text-barro-hondo"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <WhatsAppCTA compact className="hidden md:inline-flex" />
+          <MobileNav />
+        </div>
+      </div>
+    </header>
+  );
+}

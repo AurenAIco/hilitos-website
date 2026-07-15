@@ -3,6 +3,12 @@
 import type { Metadata } from "next";
 import { Fraunces, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+// AMARILLO (authorized shell composition, HILITOS-P1A-AMARILLO): the shared
+// shell + its document-level global layer, composed per the seam below.
+import "../styles/amarillo.css";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 // FONT SETUP (interim, documented — mission pack §7.5 / OQ#2):
 // Fraunces (display) + Hanken Grotesk (body), both OFL-licensed, loaded via
@@ -45,15 +51,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // SHELL COMPOSITION SEAM:
-  // Amarillo's shared <Header/> and <Footer/> are composed HERE post-HILITOS-P1A-AMARILLO,
-  // per the Violeta seam decision (resolves Amarillo Open Question #5). Do not implement them now.
+  // SHELL COMPOSITION SEAM (resolved by HILITOS-P1A-AMARILLO):
+  // Amarillo's shared Header/Footer are composed HERE per the Violeta seam
+  // decision (Amarillo Open Question #5). Pages render <main id="contenido">.
   return (
     <html lang="es-CO" className={`${fraunces.variable} ${hankenGrotesk.variable} antialiased`}>
       <body>
-        {/* <Header/> — Amarillo, later */}
+        <SkipLink />
+        <Header />
         {children}
-        {/* <Footer/> — Amarillo, later */}
+        <Footer />
       </body>
     </html>
   );
