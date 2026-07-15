@@ -19,17 +19,20 @@ export function Footer() {
             </p>
           </div>
 
-          <nav aria-label="Pie de página" className="flex flex-col gap-2.5">
+          <nav aria-label="Pie de página" className="flex flex-col">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="w-fit text-sm text-tinta hover:text-barro-hondo"
+                className="inline-flex min-h-11 w-fit items-center text-sm text-tinta hover:text-barro-hondo"
               >
                 {item.label}
               </Link>
             ))}
-            <Link href="/privacy" className="w-fit text-sm text-tinta hover:text-barro-hondo">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-11 w-fit items-center text-sm text-tinta hover:text-barro-hondo"
+            >
               Privacidad
             </Link>
           </nav>

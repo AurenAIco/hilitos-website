@@ -44,7 +44,13 @@ export function MobileNav() {
       const first = items[0];
       const last = items[items.length - 1];
       const active = document.activeElement;
-      if (event.shiftKey && active === first) {
+      // If focus has escaped the panel (e.g. a click on a non-focusable area
+      // moved it to <body>), pull it back in rather than letting Tab reach the
+      // background behind the dialog.
+      if (!panel!.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && active === first) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && active === last) {

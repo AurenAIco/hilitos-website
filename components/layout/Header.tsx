@@ -23,9 +23,9 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="stitch-underline py-2 text-sm text-tinta transition-colors duration-[var(--duration-fast)] hover:text-barro-hondo"
+              className="flex min-h-11 items-center text-sm text-tinta transition-colors duration-[var(--duration-fast)] hover:text-barro-hondo"
             >
-              {item.label}
+              <span className="stitch-underline">{item.label}</span>
             </Link>
           ))}
         </nav>

@@ -27,13 +27,20 @@ export default function HomePage() {
   const spotlightProducts = products
     .filter((p) => p.collection === SPOTLIGHT_COLLECTION)
     .slice(0, 3);
+  // A hand-made piece for the craft section. The fixture's hand-made row also
+  // happens to carry no images, so it exercises the branded ImagePlaceholder
+  // fallback on the homepage (the null-price fallback is proven by ref 2288 in
+  // the collection spotlight) — satisfying the S3 "prove the fallbacks" intent.
+  const handmadePiece = products.find(
+    (p) => p.collection === "hechos-a-mano" && p.images.length === 0,
+  );
 
   return (
     <main id="contenido">
       {/* 1 · Editorial hero */}
       <Section labelledBy="hero-titulo" className="pt-10 md:pt-14">
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
-          <div className="max-w-xl">
+          <div className="min-w-0 max-w-xl">
             <ThreadMotif className="mb-6 max-w-56" />
             <EditorialHeading as="h1" id="hero-titulo" className="text-display">
               Ajuar tejido con amor para los primeros días
@@ -166,7 +173,7 @@ export default function HomePage() {
               className="object-cover object-center"
             />
           </div>
-          <div className="max-w-lg">
+          <div className="min-w-0 max-w-lg">
             <EditorialHeading as="h2" id="oficio-titulo" className="text-3xl">
               Un legado tejido con amor y tiempo
             </EditorialHeading>
@@ -175,9 +182,19 @@ export default function HomePage() {
               para la piel más delicada.
             </p>
             <ThreadMotif className="mt-6 max-w-48" />
-            <Button href="/nosotros" variant="ghost" className="mt-4">
-              Conoce nuestra historia →
-            </Button>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Button href="/nosotros" variant="ghost">
+                Conoce nuestra historia →
+              </Button>
+            </div>
+            {handmadePiece ? (
+              <figure className="mt-8 w-40">
+                <ProductCard product={handmadePiece} />
+                <figcaption className="mt-2 text-xs text-text-muted">
+                  Una pieza hecha a mano del taller.
+                </figcaption>
+              </figure>
+            ) : null}
           </div>
         </Container>
       </Section>
@@ -268,8 +285,8 @@ export default function HomePage() {
               a: "La talla RN es ideal para recibir al bebé. Si ya nació, escríbenos y te asesoramos sobre la talla más adecuada.",
             },
           ].map((item) => (
-            <details key={item.q} className="group border-b border-hairline py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-tinta [&::-webkit-details-marker]:hidden">
+            <details key={item.q} className="group border-b border-hairline">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-4 text-tinta [&::-webkit-details-marker]:hidden">
                 <span className="font-medium">{item.q}</span>
                 <span
                   aria-hidden="true"

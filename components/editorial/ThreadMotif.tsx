@@ -9,7 +9,7 @@ export function ThreadMotif({ className = "" }: { className?: string }) {
       viewBox="0 0 400 24"
       fill="none"
       preserveAspectRatio="xMidYMid meet"
-      className={`h-6 w-full max-w-100 text-hilo ${className}`}
+      className={`h-6 w-full min-w-0 text-hilo ${className}`}
     >
       <path
         d="M2 12 C 40 3, 78 21, 116 12 S 192 3, 230 12 S 306 21, 344 12 S 388 6, 398 10"

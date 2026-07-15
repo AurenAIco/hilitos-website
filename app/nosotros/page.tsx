@@ -20,7 +20,7 @@ export default function NosotrosPage() {
     <main id="contenido">
       <Section labelledBy="nosotros-titulo" className="pt-10 md:pt-14">
         <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
-          <div className="max-w-xl">
+          <div className="min-w-0 max-w-xl">
             <ThreadMotif className="mb-6 max-w-56" />
             <EditorialHeading as="h1" id="nosotros-titulo" className="text-display">
               Un legado tejido con amor y tiempo
