@@ -11,11 +11,20 @@
 
 /*
  * Tailwind v4 theme mapping (HILITOS-F0-FOUNDATION §5.1 item 4).
- * `@theme inline` inlines var() references into the generated utilities and
- * does NOT re-emit the custom properties, so styles/tokens.css remains the
- * single source of truth. Consumers get utilities (bg-marfil, font-display,
- * text-display, rounded-pill, shadow-md, ease-standard, max-w-page, …) AND
- * the raw CSS variables.
+ * `@theme inline` inlines var() references into the generated utilities.
+ * Consumers get utilities (bg-marfil, font-display, text-display,
+ * rounded-pill, shadow-md, ease-standard, max-w-page, …) AND the raw CSS
+ * variables from styles/tokens.css.
+ *
+ * CASCADE NOTE (do not "simplify" this away): for SAME-NAME mappings below
+ * (e.g. --font-display, --text-xs), Tailwind still emits self-referential
+ * declarations (--X: var(--X)) into `@layer theme`. These are inert ONLY
+ * because styles/tokens.css is imported UNLAYERED above, and unlayered
+ * author declarations beat layered ones (CSS Cascade 5), so the real token
+ * definitions win on :root and no custom-property cycle forms. Therefore
+ * tokens.css MUST remain imported unlayered (never wrap it in @layer / a
+ * layered @import) — otherwise the theme-layer self-references could win
+ * and collapse those tokens to invalid values.
  */
 @theme inline {
   /* colors — the 8 frozen brand tokens */
