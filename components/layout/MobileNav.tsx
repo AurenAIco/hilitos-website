@@ -32,6 +32,16 @@ export function MobileNav() {
     const focusables = panel.querySelectorAll<HTMLElement>(FOCUSABLE);
     focusables[0]?.focus();
 
+    // If the viewport grows to the desktop breakpoint while the drawer is open,
+    // the md:hidden wrapper disappears via CSS but `open` would stay true and the
+    // body scroll lock would leak. Close through the canonical close() so state,
+    // scroll lock (restored by this effect's cleanup) and focus are all handled.
+    const desktopMq = window.matchMedia("(min-width: 768px)");
+    function onDesktopChange(event: MediaQueryListEvent) {
+      if (event.matches) close();
+    }
+    desktopMq.addEventListener("change", onDesktopChange);
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -62,6 +72,7 @@ export function MobileNav() {
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      desktopMq.removeEventListener("change", onDesktopChange);
       document.body.style.overflow = previousOverflow;
     };
   }, [open, close]);

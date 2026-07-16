@@ -31,7 +31,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <WhatsAppCTA compact className="hidden md:inline-flex" />
+          {/* Visibility is controlled by this wrapper, NOT by passing display
+              classes to WhatsAppCTA (whose base `inline-flex` would otherwise
+              win over `hidden` at mobile widths and leak the CTA). */}
+          <span className="hidden md:inline-flex">
+            <WhatsAppCTA compact />
+          </span>
           <MobileNav />
         </div>
       </div>
