@@ -21,14 +21,25 @@ require the owning terminal's (Violeta's) approval. This document satisfies Amar
 ```
 hilitos-website/  (branch: redesign/main)
 ├── app/
-│   ├── layout.tsx ..................... SHARED (Violeta/foundation) — shell seam, fonts, metadata
+│   ├── layout.tsx ..................... SHARED (Violeta/SHELL0) — MINIMAL ROOT: html/body, lang,
+│   │                                      fonts, globals.css, metadataBase, children. NO surface chrome.
 │   ├── globals.css .................... SHARED (Violeta/foundation) — Tailwind entry + token→theme mapping
-│   ├── page.tsx  (/) .................. skeleton by Violeta → OWNED by AMARILLO
-│   ├── nosotros/page.tsx .............. skeleton by Violeta → OWNED by AMARILLO
-│   ├── privacy/page.tsx ............... skeleton by Violeta → OWNED by AMARILLO (content: Mónica/legal)
-│   ├── catalogo/page.tsx .............. skeleton by Violeta → OWNED by VERDE
-│   ├── productos/[slug]/page.tsx ...... skeleton by Violeta → OWNED by VERDE
-│   ├── colecciones/[slug]/page.tsx .... skeleton by Violeta → OWNED by VERDE
+│   ├── (public)/
+│   │   ├── layout.tsx ................. SHARED (Violeta/SHELL0) — PUBLIC STOREFRONT SHELL:
+│   │   │                                  imports styles/amarillo.css; storefront metadata
+│   │   │                                  (title/description/openGraph); composes SkipLink/
+│   │   │                                  Header/{children}/Footer (Amarillo components,
+│   │   │                                  moved verbatim, never redesigned here). NO <main>.
+│   │   ├── page.tsx  (/) .............. OWNED by AMARILLO
+│   │   ├── nosotros/page.tsx .......... OWNED by AMARILLO
+│   │   ├── privacy/page.tsx ........... OWNED by AMARILLO (content: Mónica/legal)
+│   │   ├── catalogo/page.tsx .......... OWNED by VERDE (skeleton; SHELL0 seam exception — see below)
+│   │   ├── productos/[slug]/page.tsx .. OWNED by VERDE (skeleton; SHELL0 seam exception)
+│   │   └── colecciones/[slug]/page.tsx  OWNED by VERDE (skeleton; SHELL0 seam exception)
+│   ├── (admin)/
+│   │   └── layout.tsx ................. SHARED (Violeta/SHELL0) — INERT ADMIN BOUNDARY: children
+│   │                                      only; no chrome/CSS/auth/Supabase/page. Future owner:
+│   │                                      ADM1a/ADM1b (auth, admin chrome, admin metadata).
 │   ├── robots.ts ...................... skeleton by Violeta → OWNED by VERDE (dynamic gen; FAIL-CLOSED until A6)
 │   └── sitemap.ts ..................... skeleton by Violeta → OWNED by VERDE (dynamic gen)
 ├── components/ ........................ (created later)
@@ -61,11 +72,37 @@ hilitos-website/  (branch: redesign/main)
 master branch ......................... PRODUCTION (GitHub Pages, hilitos.co) — NEVER TOUCHED by redesign missions
 ```
 
-**Explicitly shared (require Violeta approval to edit):** `app/layout.tsx`, `app/globals.css`,
-`styles/tokens.css`, `lib/contract.ts`, `lib/components.ts`, `lib/fixture.ts`, `lib/fixture.schema.ts`,
-`catalog.fixture.json`, root metadata, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`,
-`tsconfig.json`, `package.json`/lockfile. Catalog route files and `app/robots.ts`/`app/sitemap.ts`
-transfer to **Verde** (see §7).
+**Explicitly shared (require Violeta approval to edit):** `app/layout.tsx`, `app/(public)/layout.tsx`,
+`app/(admin)/layout.tsx`, `app/globals.css`, `styles/tokens.css`, `lib/contract.ts`, `lib/components.ts`,
+`lib/fixture.ts`, `lib/fixture.schema.ts`, `catalog.fixture.json`, root metadata, `next.config.ts`,
+`postcss.config.mjs`, `eslint.config.mjs`, `tsconfig.json`, `package.json`/lockfile. Catalog route files
+and `app/robots.ts`/`app/sitemap.ts` transfer to **Verde** (see §7).
+
+### 2.1 · SHELL0 layout topology (post HILITOS-SHELL0)
+
+- **One root layout** (`app/layout.tsx`): html/body, `lang="es-CO"`, next/font Fraunces + Hanken
+  Grotesk (variables for every surface), `globals.css` (Tailwind + tokens **unlayered** + `@theme`
+  + body base), `metadataBase` only, `{children}`. Nested layouts must NEVER add a second
+  `<html>`/`<body>` (single-root invariant).
+- **`(public)` route group** = the storefront surface. `app/(public)/layout.tsx` owns the single
+  `import "@/styles/amarillo.css"` (relocated from root by SHELL0 — file content untouched,
+  Amarillo-owned; cascade order preserved: parent `globals.css` precedes it), the storefront brand
+  metadata, and the SkipLink/Header/Footer composition. It renders no `<main>` — each public page
+  owns its `<main id="contenido">` (the global SkipLink target).
+- **`(admin)` route group** = the future admin surface. SHELL0 ships ONLY the inert
+  `app/(admin)/layout.tsx` (children passthrough; no page → no route). Sibling route groups do not
+  share layouts, so `(admin)` routes can never inherit the storefront shell. All admin
+  functionality (auth, Supabase, chrome, metadata, `noindex`) belongs to **ADM1a/ADM1b** — not
+  SHELL0, and no shared contract changes and no Auth/Supabase work happened in SHELL0.
+- **SHELL0 Verde seam exception (bounded, S0-approved):** SHELL0 (Violeta) added **only**
+  `id="contenido"` to the existing `<main>` of the three Verde skeletons
+  (`(public)/catalogo`, `(public)/productos/[slug]`, `(public)/colecciones/[slug]`) so the skip
+  link works on all six public routes. No other change to Verde files. The Verde binding — every
+  Verde route must render `<main id="contenido">` — remains in force for Verde's real
+  implementation.
+- **ADM1a carry-forward:** `:focus-visible` and the reduced-motion reset live in storefront-owned
+  `styles/amarillo.css`, which admin does not inherit. ADM1a must establish admin's own a11y
+  foundation or propose a separately reviewed shared extraction.
 
 ## 3 · Branch & Worktree Conventions (RE-4 — Amarillo precondition #10)
 

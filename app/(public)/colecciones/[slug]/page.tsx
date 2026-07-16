@@ -7,7 +7,7 @@ export default async function ColeccionSkeletonPage({
 }) {
   const { slug } = await params;
   return (
-    <main>
+    <main id="contenido">
       <p>⟨ROUTE SKELETON — /colecciones/{slug} — se implementa en la misión Verde⟩</p>
     </main>
   );
