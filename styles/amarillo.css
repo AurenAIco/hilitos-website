@@ -22,6 +22,13 @@
   left: var(--space-3);
 }
 
+/* ---- Skip-link / in-page anchor target offset (AZ-4) ----
+   The header is a 4rem sticky bar; give #contenido a little extra so the
+   skip-to-content jump lands below the header, not under it. */
+#contenido {
+  scroll-margin-top: 4.5rem;
+}
+
 /* ---- Visible focus (AA-critical color) ---- */
 :focus-visible {
   outline: 2px solid var(--focus-ring);
