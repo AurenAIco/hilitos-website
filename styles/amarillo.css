@@ -1,0 +1,96 @@
+/*
+ * styles/amarillo.css — AMARILLO-owned global layer (HILITOS-P1A-AMARILLO).
+ * Document-level styles only: skip-link, :focus-visible, reveal motion,
+ * reduced-motion, stitch-underline utility. Imported UNLAYERED from
+ * app/layout.tsx as part of the authorized shell composition.
+ * Component styling lives with each component (Tailwind utilities / modules).
+ */
+
+/* ---- Skip to content ---- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-3);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--tinta);
+  color: var(--marfil);
+  font-size: var(--text-sm);
+}
+.skip-link:focus-visible {
+  left: var(--space-3);
+}
+
+/* ---- Skip-link / in-page anchor target offset (AZ-4) ----
+   The header is a 4rem sticky bar; give #contenido a little extra so the
+   skip-to-content jump lands below the header, not under it. */
+#contenido {
+  scroll-margin-top: 4.5rem;
+}
+
+/* ---- Visible focus (AA-critical color) ---- */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Stitch underline (thread detail on links/headings) ---- */
+.stitch-underline {
+  text-decoration: none;
+  padding-bottom: 3px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--hilo) 0,
+    var(--hilo) 6px,
+    transparent 6px,
+    transparent 11px
+  );
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+}
+
+/* ---- Section reveal (CSS-first; observer only toggles data-revealed) ----
+   Hidden state applies ONLY when scripting is available, so content is never
+   lost without JS. Reduced motion renders the final state immediately. */
+@media (scripting: enabled) {
+  .reveal[data-revealed="false"] {
+    opacity: 0;
+  }
+}
+.reveal[data-revealed="true"] {
+  animation: amarillo-rise var(--duration-slow) var(--ease-entrance) both;
+}
+@keyframes amarillo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- Reduced motion: final state, no transforms/reveals ---- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-revealed="false"],
+  .reveal[data-revealed="true"] {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
