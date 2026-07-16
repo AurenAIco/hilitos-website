@@ -7,7 +7,7 @@ export default async function ProductoSkeletonPage({
 }) {
   const { slug } = await params;
   return (
-    <main>
+    <main id="contenido">
       <p>⟨ROUTE SKELETON — /productos/{slug} — se implementa en la misión Verde⟩</p>
     </main>
   );
