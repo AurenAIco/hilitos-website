@@ -78,10 +78,46 @@ test("§18: admin.css establishes a 44x44 tap-target floor with a dimensionable 
 
   const tapTargetRule = css.match(/\.admin-tap-target\s*\{([^}]*)\}/);
   assert.ok(tapTargetRule, "expected an .admin-tap-target rule to exist");
+  const tapTargetBody = tapTargetRule[1];
   assert.match(
-    tapTargetRule[1],
+    tapTargetBody,
     /display:\s*(inline-flex|flex|grid|inline-grid|inline-block|block)/,
     ".admin-tap-target must establish a dimensionable display mode (e.g. inline-flex) or min-width/min-height have no effect",
+  );
+  assert.match(tapTargetBody, /min-height:\s*44px/, ".admin-tap-target must set min-height: 44px");
+  assert.match(tapTargetBody, /min-width:\s*44px/, ".admin-tap-target must set min-width: 44px");
+});
+
+test('§18: [role="button"] never appears in a base selector that sets the 44x44 floor without a dimensionable display (static text check only)', () => {
+  // Source-level assertion on the CSS text only — role is an ARIA
+  // attribute and never implies a display mode by itself. A bare
+  // [role="button"] selector paired with min-width/min-height alone (no
+  // display declaration) would be a false compliance claim, the same bug
+  // as including a plain <a>. This does not verify rendered/computed
+  // behavior in a real browser.
+  const css = readFileSync(join(ADMIN_DIR, "admin.css"), "utf8");
+  // Strip /* ... */ comments before matching selectors — the file's own
+  // documentation prose legitimately mentions [role="button"] to explain
+  // why it's excluded, which must not itself count as an offending rule.
+  const cssWithoutComments = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const dimensionableDisplay =
+    /display:\s*(inline-flex|flex|grid|inline-grid|inline-block|block)/;
+
+  const offendingRules: string[] = [];
+  for (const ruleMatch of cssWithoutComments.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+    const [, selector, body] = ruleMatch;
+    if (selector.includes(".admin-tap-target")) continue;
+    const setsFloor = /min-height:\s*44px/.test(body) && /min-width:\s*44px/.test(body);
+    if (!setsFloor) continue;
+    const includesRoleButton = /\[role=["']button["']\]/.test(selector);
+    if (includesRoleButton && !dimensionableDisplay.test(body)) {
+      offendingRules.push(selector.trim());
+    }
+  }
+  assert.deepEqual(
+    offendingRules,
+    [],
+    `unexpected [role="button"] in a base 44px selector with no dimensionable display: ${offendingRules.join(" | ")}`,
   );
 });
 
