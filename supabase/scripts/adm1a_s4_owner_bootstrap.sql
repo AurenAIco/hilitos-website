@@ -29,12 +29,15 @@
 -- Example invocation against the OD-1 disposable stack ONLY (throwaway
 -- example.com identity and throwaway company_id constant — dispatch §7
 -- "Local-only in S4"; never a real value, never run against any cloud
--- resource):
+-- resource). Pass RAW values to -v, with NO embedded quotes — the
+-- script's own `:'name'` references already apply SQL-literal quoting;
+-- adding quotes in the -v value too produces a doubly-quoted string that
+-- fails the gate/identity checks (verified against this stack):
 --   psql "$LOCAL_DB_URL" \
---     -v owner_auth_id="'00000000-0000-0000-0000-000000000001'" \
---     -v owner_email="'owner-rehearsal@example.com'" \
---     -v company_id="'00000000-0000-0000-0000-0000000000c0'" \
---     -v bootstrap_gate="'I_UNDERSTAND_ONE_TIME_OWNER_BOOTSTRAP'" \
+--     -v owner_auth_id="00000000-0000-0000-0000-000000000001" \
+--     -v owner_email="owner-rehearsal@example.com" \
+--     -v company_id="00000000-0000-0000-0000-0000000000c0" \
+--     -v bootstrap_gate="I_UNDERSTAND_ONE_TIME_OWNER_BOOTSTRAP" \
 --     -f supabase/scripts/adm1a_s4_owner_bootstrap.sql
 --
 -- Idempotence: a pre-flight existence check plus ON CONFLICT DO NOTHING

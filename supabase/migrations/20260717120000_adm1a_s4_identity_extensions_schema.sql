@@ -21,3 +21,12 @@ comment on schema cms is
 -- grant absence + RLS + non-exposed schema = three independent layers).
 grant usage on schema cms to authenticated;
 grant usage on schema cms to service_role;
+
+-- service_role additionally needs CREATE on cms: Postgres requires the new
+-- owner of an object to hold CREATE on its schema before ownership can be
+-- transferred to it (checked at ALTER ... OWNER TO time). This is a direct,
+-- necessary consequence of the §6.0 pinned-owner contract — every
+-- membership helper below is owned by service_role — not a widening of
+-- its trust boundary (§6 already grants service_role full table-level
+-- access throughout cms).
+grant create on schema cms to service_role;
