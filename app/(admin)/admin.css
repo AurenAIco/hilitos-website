@@ -1,0 +1,36 @@
+/*
+ * app/(admin)/admin.css — ADMIN ACCESSIBILITY FOUNDATION (ADM1a §18).
+ * Independent of the public-only styles/amarillo.css, which (admin) does not
+ * import (see docs/OWNERSHIP.md, SHELL0 boundary rules). Establishes the
+ * baseline admin needs — :focus-visible, prefers-reduced-motion — authored
+ * separately rather than extracted from amarillo.css; a shared-base
+ * extraction is its own separately reviewed proposal (RD-3), not this slice.
+ * Imported only by app/(admin)/layout.tsx.
+ */
+
+/* Future admin skip-link target (RD-7). Never reuses the public #contenido
+   id — that belongs to the (public) SkipLink seam. */
+#admin-contenido {
+  scroll-margin-top: var(--space-4);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
