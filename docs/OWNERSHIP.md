@@ -37,9 +37,14 @@ hilitos-website/  (branch: redesign/main)
 │   │   ├── productos/[slug]/page.tsx .. OWNED by VERDE (skeleton; SHELL0 seam exception)
 │   │   └── colecciones/[slug]/page.tsx  OWNED by VERDE (skeleton; SHELL0 seam exception)
 │   ├── (admin)/
-│   │   └── layout.tsx ................. SHARED (Violeta/SHELL0) — INERT ADMIN BOUNDARY: children
-│   │                                      only; no chrome/CSS/auth/Supabase/page. Future owner:
-│   │                                      ADM1a/ADM1b (auth, admin chrome, admin metadata).
+│   │   ├── layout.tsx ................. OWNED by ADM1a (Gate G1, since Slice S1 — see §9): pre-auth
+│   │   │                                  structural & indexing boundary. force-dynamic + noindex robots
+│   │   │                                  metadata + admin a11y foundation. NO session or authorization
+│   │   │                                  guard exists in S1 — that arrives in Slice S3. No page.tsx
+│   │   │                                  anywhere under (admin) yet → still no /admin route.
+│   │   └── admin.css .................. OWNED by ADM1a (Gate G1, Slice S1) — admin-only :focus-visible +
+│   │                                      prefers-reduced-motion foundation (§18); independent of the
+│   │                                      public-only styles/amarillo.css, never extracted from it.
 │   ├── robots.ts ...................... skeleton by Violeta → OWNED by VERDE (dynamic gen; FAIL-CLOSED until A6)
 │   └── sitemap.ts ..................... skeleton by Violeta → OWNED by VERDE (dynamic gen)
 ├── components/ ........................ (created later)
@@ -73,10 +78,14 @@ master branch ......................... PRODUCTION (GitHub Pages, hilitos.co) �
 ```
 
 **Explicitly shared (require Violeta approval to edit):** `app/layout.tsx`, `app/(public)/layout.tsx`,
-`app/(admin)/layout.tsx`, `app/globals.css`, `styles/tokens.css`, `lib/contract.ts`, `lib/components.ts`,
+`app/globals.css`, `styles/tokens.css`, `lib/contract.ts`, `lib/components.ts`,
 `lib/fixture.ts`, `lib/fixture.schema.ts`, `catalog.fixture.json`, root metadata, `next.config.ts`,
-`postcss.config.mjs`, `eslint.config.mjs`, `tsconfig.json`, `package.json`/lockfile. Catalog route files
-and `app/robots.ts`/`app/sitemap.ts` transfer to **Verde** (see §7).
+`postcss.config.mjs`, `eslint.config.mjs`, `tsconfig.json`. Catalog route files
+and `app/robots.ts`/`app/sitemap.ts` transfer to **Verde** (see §7); `app/(admin)/layout.tsx` and
+`app/(admin)/admin.css` transfer to **ADM1a** (see §9). `package.json`/lockfile remain Violeta-shared
+in general, with a narrow, pack-authorized exception for ADM1a-S1's test-runner introduction (§9) —
+`middleware.ts`, introduced in ADM1a-S2, stays explicitly SHARED and requires Violeta's sign-off
+recorded in that slice's PR (OD-3), unlike the files above.
 
 ### 2.1 · SHELL0 layout topology (post HILITOS-SHELL0)
 
@@ -89,20 +98,23 @@ and `app/robots.ts`/`app/sitemap.ts` transfer to **Verde** (see §7).
   Amarillo-owned; cascade order preserved: parent `globals.css` precedes it), the storefront brand
   metadata, and the SkipLink/Header/Footer composition. It renders no `<main>` — each public page
   owns its `<main id="contenido">` (the global SkipLink target).
-- **`(admin)` route group** = the future admin surface. SHELL0 ships ONLY the inert
-  `app/(admin)/layout.tsx` (children passthrough; no page → no route). Sibling route groups do not
-  share layouts, so `(admin)` routes can never inherit the storefront shell. All admin
-  functionality (auth, Supabase, chrome, metadata, `noindex`) belongs to **ADM1a/ADM1b** — not
-  SHELL0, and no shared contract changes and no Auth/Supabase work happened in SHELL0.
+- **`(admin)` route group** = the future admin surface. SHELL0 shipped ONLY the inert
+  `app/(admin)/layout.tsx` (children passthrough; no page → no route). As of ADM1a-S1 (§9), the
+  layout is a **pre-auth structural & indexing boundary** (force-dynamic, noindex, admin a11y
+  foundation) — still no page.tsx under `(admin)`, so still no `/admin` route. Sibling route
+  groups do not share layouts, so `(admin)` routes can never inherit the storefront shell. **No
+  session or authorization guard exists in S1** — that arrives in Slice S3, once Slice S2 has
+  introduced `middleware.ts` and the login/shell page skeleton. Not S1, and not SHELL0.
 - **SHELL0 Verde seam exception (bounded, S0-approved):** SHELL0 (Violeta) added **only**
   `id="contenido"` to the existing `<main>` of the three Verde skeletons
   (`(public)/catalogo`, `(public)/productos/[slug]`, `(public)/colecciones/[slug]`) so the skip
   link works on all six public routes. No other change to Verde files. The Verde binding — every
   Verde route must render `<main id="contenido">` — remains in force for Verde's real
   implementation.
-- **ADM1a carry-forward:** `:focus-visible` and the reduced-motion reset live in storefront-owned
-  `styles/amarillo.css`, which admin does not inherit. ADM1a must establish admin's own a11y
-  foundation or propose a separately reviewed shared extraction.
+- **ADM1a carry-forward — RESOLVED (Slice S1):** `:focus-visible` and the reduced-motion reset
+  lived only in storefront-owned `styles/amarillo.css`, which admin does not inherit. ADM1a-S1
+  resolved this by authoring an independent `app/(admin)/admin.css` (§9) — no extraction from
+  `amarillo.css` occurred or is planned.
 
 ## 3 · Branch & Worktree Conventions (RE-4 — Amarillo precondition #10)
 
@@ -182,3 +194,30 @@ On `redesign/main` (and only there), the old static GitHub Pages site — `index
 - **Category cardinality (RE-5):** `ProductContract.category` is **singular by decision**
   (`string | null`). If the real catalog needs multiple categories per product, it must change
   **before** Amarillo/Verde consume the contract (see mission pack §17 OQ#7).
+
+## 9 · ADM1a admin-boundary ownership transfer (Slice S1)
+
+Per `JUANPA GO: HILITOS-ADM1A-SECURITY-FOUNDATION` (2026-07-16) authorizing Slice S1 of
+`HILITOS_ADM1A_SECURITY_FOUNDATION_MISSION_PACK` (repo copy: `docs/mission-packs/`):
+
+- `app/(admin)/layout.tsx` and the new `app/(admin)/admin.css` transfer from SHELL0/Violeta to
+  **ADM1a** ownership. S1 scope only: `force-dynamic`, non-indexable robots metadata, and the
+  admin a11y foundation (§18 of the pack). **No session or authorization guard exists in S1** —
+  authorization arrives in Slice S3, once Slice S2 has introduced `middleware.ts` and the
+  login/shell page skeleton. No page under `(admin)` in S1 either.
+- **Test runner introduced (RD-8, INV-23):** a minimal `package.json` `"test"` script was added
+  using Node's built-in `node:test` runner via the already-present `tsx` devDependency —
+  **zero new dependencies, zero lockfile diff.** This is a narrow, pack-authorized exception to
+  `package.json` being Violeta-shared; the dependency-audit evidence is simply "no new dependency
+  was added." **Slice S1 introduced both the runner itself and the first S1-scoped assertion
+  suite** (`tests/adm1a/s1-admin-boundary.test.ts` — checks only S1's own claims: no routable
+  entrypoint under `(admin)`, no forbidden imports, admin.css contract present, no Supabase
+  dependency, exactly one test runner). **Slice S6 completes the cross-cutting ADM1a harness**
+  (route protection, session state, roles, RLS, etc. — the full §20 test matrix) under this same
+  `tests/adm1a/**` directory; S6 does not introduce the runner or the first tests, both already
+  exist from S1.
+- `docs/mission-packs/HILITOS_ADM1A_SECURITY_FOUNDATION_2026-07-16.md` is the committed repo copy
+  of the approved mission pack (frontmatter `recommended_repo_path`).
+- Unaffected by this slice: every `(public)` route, `app/layout.tsx`, `styles/amarillo.css`,
+  `styles/tokens.css`, and all frozen contracts (`lib/contract.ts`, `lib/components.ts`,
+  `lib/fixture*.ts`, `catalog.fixture.json`).

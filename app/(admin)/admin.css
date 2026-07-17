@@ -1,0 +1,130 @@
+/*
+ * app/(admin)/admin.css — ADMIN ACCESSIBILITY FOUNDATION (ADM1a §18).
+ * Independent of the public-only styles/amarillo.css, which (admin) does not
+ * import (see docs/OWNERSHIP.md, SHELL0 boundary rules). Establishes the
+ * baseline admin needs authored separately rather than extracted from
+ * amarillo.css; a shared-base extraction is its own separately reviewed
+ * proposal (RD-3), not this slice. Imported only by app/(admin)/layout.tsx.
+ *
+ * S1 ships hooks/base rules only — no admin UI exists yet (no page under
+ * (admin)). Every rule below is inert until a future page's markup actually
+ * uses the id/class/attribute it targets. Future-page conventions:
+ *   - Wrap the page's own <main> in id="admin-contenido" (§18, RD-7) — never
+ *     the public #contenido id.
+ *   - Native buttons and form controls (button/input/select/textarea)
+ *     already meet the 44x44 minimum via the base rule below and need no
+ *     extra class — their browser-default display mode (inline-block)
+ *     actually respects min-width/min-height.
+ *   - Anchors and custom elements such as <span role="button"> do NOT
+ *     receive a guaranteed target size automatically. `role="button"`
+ *     provides semantics only (so assistive tech announces it correctly)
+ *     — it does not change layout or display behavior, so an element
+ *     carrying only that attribute is not covered by the base rule.
+ *     `min-width`/`min-height` have no effect on the default
+ *     `display: inline` of an <a> or a bare <span>, so including either
+ *     in the base rule would be a false compliance claim, not an
+ *     enforced floor.
+ *   - Any custom interactive element that requires a guaranteed 44x44
+ *     target — an anchor, a role="button" span, an icon-only control —
+ *     must use the .admin-tap-target class, which establishes a
+ *     dimensionable display mode (inline-flex) as well as the size floor.
+ *     Apply it only to the elements that actually need a guaranteed
+ *     floor — never as a blanket reclassification of every future admin
+ *     anchor/role="button" element, so ordinary text links keep their
+ *     normal inline flow.
+ *   - Set aria-invalid="true" on a form field once it fails validation.
+ *   - Use aria-live="polite" (or the .admin-status class) on the element
+ *     that announces login/session status changes (§18).
+ */
+
+/* Future admin skip-link target (RD-7). Never reuses the public #contenido
+   id — that belongs to the (public) SkipLink seam. */
+#admin-contenido {
+  scroll-margin-top: var(--space-4);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Minimum interactive target size (§18: >=44px tap targets) ----
+   Base rule covers only elements whose default display mode actually
+   respects min-width/min-height: button/input/select/textarea are
+   inline-block by default in the UA stylesheet. `role="button"` is
+   deliberately EXCLUDED here — it is an ARIA attribute that changes
+   assistive-tech semantics only, never layout/display behavior, so a
+   bare [role="button"] selector (e.g. matching a <span role="button">,
+   which defaults to display: inline) would have no effect on its size,
+   the same false-compliance problem as including <a>. Ordinary <a>
+   anchors remain excluded for the same reason. */
+button,
+input,
+select,
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Touch-target hook for anchors and custom elements (e.g.
+   <span role="button">) whose default display mode is inline and would
+   otherwise ignore min-width/min-height: establishes a dimensionable
+   display mode (inline-flex) so the size floor actually takes effect,
+   centers content within it, and stops there — this class is opt-in per
+   element, not a blanket reclassification of every future admin
+   anchor/role="button" element into a flex container. */
+.admin-tap-target {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ---- Mobile-safe base (§18: usable at 360-390px, single column) ----
+   Applies to the admin root landmark and any element opting into
+   .admin-container; keeps content within the viewport instead of
+   requiring horizontal scroll. */
+#admin-contenido,
+.admin-container {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline: var(--space-4);
+}
+
+/* ---- Invalid-field state (§18: perceivable without color alone) ----
+   Reuses --barro-hondo (already the AA-critical interactive/text token in
+   styles/tokens.css) rather than inventing a new raw error color; a
+   dedicated error token would be a styles/tokens.css change, which is
+   frozen and out of ADM1a-S1 scope. Pair with aria-describedby text in the
+   future form markup — color/outline alone is never the only signal. */
+[aria-invalid="true"] {
+  outline: 2px solid var(--barro-hondo);
+  outline-offset: 2px;
+}
+
+/* ---- Status/live region hook (§18: announced state changes) ----
+   Targets both the aria-live attribute directly and the .admin-status
+   class, for a future element that doesn't otherwise need aria-live on the
+   same node it's styled from. */
+[aria-live],
+.admin-status {
+  font-size: var(--text-sm);
+  color: var(--text);
+}

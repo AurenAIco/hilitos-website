@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "fixture-lint": "tsx lib/fixture.schema.ts"
+    "fixture-lint": "tsx lib/fixture.schema.ts",
+    "test": "node --import tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
     "next": "16.2.10",
