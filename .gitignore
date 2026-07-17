@@ -48,3 +48,7 @@ Referencias/
 
 # OS
 Thumbs.db
+
+# Supabase CLI local scratch state (ADM1a-S4, dispatch §8)
+supabase/.temp/
+supabase/.branches/
