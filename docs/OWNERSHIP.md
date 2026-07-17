@@ -268,3 +268,55 @@ Per `JUANPA SLICE GO: HILITOS-ADM1A-S2` (2026-07-16), implementing the artifact
 - Unaffected by this slice: every `(public)` route, all frozen contracts, `app/(admin)/layout.tsx`,
   `app/(admin)/admin.css` (S1-final, consumed not edited), and every Supabase/Auth/Production/DNS
   surface — none of which this slice touches, creates, or configures.
+
+## 11 · ADM1a `supabase/**` ownership transfer + SHARED-class config (Slice S4)
+
+Per `JUANPA SLICE GO: HILITOS-ADM1A-S4` (2026-07-17), implementing the artifact
+`Mission_Packs/HILITOS_ADM1A_S4_IMPLEMENTATION_DISPATCH_2026-07-17.md` (SHA256
+`1bf1be60b4e65662426bd315f6e0d73359b074b1d9c34015279ea8c380670945`):
+
+- **`supabase/` path transfers from ADM0's unassigned ownership tree to ADM1a day-to-day
+  ownership**, with one exception below. This slice ran **entirely against a local disposable
+  Supabase stack (OD-1)** — no cloud project, no `supabase link`, no remote ref of any kind exists
+  or is authorized.
+- `supabase/config.toml` (new) — **SHARED-class foundation config, same governance tier as
+  `middleware.ts` under OD-3.** A root-level, cross-slice file every later slice's local stack
+  depends on (S3, S6, G3 all reuse it verbatim). Day-to-day ownership is ADM1a's; **any future
+  material change requires a fresh Violeta shared-file pass**, recorded against the exact artifact,
+  identically to `middleware.ts`'s S2 rule (§10). Pinned deltas from the CLI-generated default:
+  `project_id = "hilitos-website"` (a local workspace name only — explicitly not a cloud project
+  ref); `[api].schemas` excludes `cms` (INV-10 local posture — identity/admin tables are never
+  exposed to the local Data API); `[auth].enable_signup = false` (mirrors the invite-only
+  production posture); `site_url`/redirect URLs are `localhost`-only. No secret value of any kind.
+- `supabase/migrations/*_adm1a_s4_*.sql` (5 files, new) — **OWNED by ADM1a**. Identity/security-core
+  only (Mission Pack OD-2(a) — editorial tables, `public_site_*` views, Storage policies, and M0
+  seed data are all G3's, not this slice's): `citext` extension + `cms` schema + minimum schema
+  grants; `cms.admin_users` (ADM0 §10.1 verbatim) + `updated_at` trigger; the three SECURITY
+  DEFINER membership helpers (`cms.is_member()/role()/company()`) with the **pinned-owner
+  contract** — each explicitly `ALTER FUNCTION ... OWNER TO service_role` (never implicit
+  ownership) plus `REVOKE EXECUTE ... FROM PUBLIC`; `admin_users` RLS (ENABLE+FORCE) and the
+  self-elevation guard trigger; `cms.site_change_log` + `cms.site_publications` (ADM0
+  §10.10/§10.11 verbatim shapes) with their own RLS. (The dispatch's §5.7 last-active-owner guard
+  trigger was struck post-dispatch — a non-atomic `COUNT(*)` check unsafe under concurrent
+  owner-removal transactions — with no replacement mechanism introduced in this slice; see
+  `docs/adm1a/S4_IDENTITY_CORE_NOTES.md`.)
+- `supabase/scripts/adm1a_s4_owner_bootstrap.sql` (new) — **OWNED by ADM1a**. A one-time, gated,
+  idempotent, non-browser-invokable owner-bootstrap SQL script (OD-4/§16.A) — deliberately **not**
+  a migration. Rehearsed only against the OD-1 disposable stack with a throwaway
+  `owner-rehearsal@example.com` identity; no real Owner is or can be created by this slice. Live
+  execution (§16.B) is out of scope until G2+, under its own literal GO.
+- `supabase/tests/adm1a/s4_identity_rls.sql` (new) — pgTAP RLS/invariant suite, OD-1 stack only.
+  Proves RLS/grants/trigger behavior and the Layer B-F1 catalog verification contract
+  (`pg_proc`/`pg_roles`/`pg_namespace` — ownership, `prosecdef`, `proconfig`, ACLs) for every
+  SECURITY DEFINER helper. This is a **local rehearsal only** — never the G3 live proof.
+- `tests/adm1a/s4-identity-foundation.test.ts` (new) — Layer A static source hygiene, auto-discovered
+  by the S1 test runner (§9); building on the S1/S2 suites, confirms they stay green in the same run.
+- `docs/adm1a/S4_IDENTITY_CORE_NOTES.md` (new) — schema notes, env-name inventory (names only, no
+  values), local-stack runbook, and the S3/G2+ staged-handoff notes (§7 of the dispatch).
+- **No app code of any kind** — S4 ships zero Auth UI, sessions, OTP, `@supabase/ssr`, Supabase JS
+  client, middleware change, or route guard. `middleware.ts` and `lib/admin/routing.ts` (§10) are
+  untouched. Those all remain Slice S3's, per the dispatch's own S3/S4 boundary (§3, §11).
+- **No dependency or lockfile change of any kind** — `package.json`/`package-lock.json` diff vs.
+  baseline is 0 lines (enforced by the Layer A static suite).
+- Unaffected by this slice: every `(public)` route, all frozen contracts, `app/(admin)/**`,
+  `middleware.ts`, `lib/admin/routing.ts`, and every Production/DNS/GitHub Pages surface.
