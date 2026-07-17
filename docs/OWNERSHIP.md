@@ -40,11 +40,15 @@ hilitos-website/  (branch: redesign/main)
 │   │   ├── layout.tsx ................. OWNED by ADM1a (Gate G1, since Slice S1 — see §9): pre-auth
 │   │   │                                  structural & indexing boundary. force-dynamic + noindex robots
 │   │   │                                  metadata + admin a11y foundation. NO session or authorization
-│   │   │                                  guard exists in S1 — that arrives in Slice S3. No page.tsx
-│   │   │                                  anywhere under (admin) yet → still no /admin route.
-│   │   └── admin.css .................. OWNED by ADM1a (Gate G1, Slice S1) — admin-only :focus-visible +
-│   │                                      prefers-reduced-motion foundation (§18); independent of the
-│   │                                      public-only styles/amarillo.css, never extracted from it.
+│   │   │                                  guard exists yet — that arrives in Slice S3.
+│   │   ├── admin.css .................. OWNED by ADM1a (Gate G1, Slice S1) — admin-only :focus-visible +
+│   │   │                                  prefers-reduced-motion foundation (§18); independent of the
+│   │   │                                  public-only styles/amarillo.css, never extracted from it.
+│   │   └── admin/
+│   │       ├── page.tsx  (/admin) ..... OWNED by ADM1a (Gate G1, Slice S2 — see §10): honest,
+│   │       │                              non-sensitive placeholder shell. NOT securely authenticated.
+│   │       └── login/page.tsx (/admin/login) OWNED by ADM1a (Slice S2): honest, non-functional
+│   │                                      restricted-access shell — no form, no OTP, no real login yet.
 │   ├── robots.ts ...................... skeleton by Violeta → OWNED by VERDE (dynamic gen; FAIL-CLOSED until A6)
 │   └── sitemap.ts ..................... skeleton by Violeta → OWNED by VERDE (dynamic gen)
 ├── components/ ........................ (created later)
@@ -57,6 +61,8 @@ hilitos-website/  (branch: redesign/main)
 │   ├── components.ts .................. SHARED (Violeta/foundation) — ProductCardProps (frozen, type only)
 │   ├── fixture.ts ..................... SHARED (Violeta/foundation) — typed CONSUMPTION only (server-side)
 │   ├── fixture.schema.ts .............. SHARED (Violeta/foundation) — AUTHORITATIVE Zod fixture validator (RE-1)
+│   ├── admin/routing.ts ............... OWNED by ADM1a (Gate G1, Slice S2 — see §10): dependency-free pure
+│   │                                      routing-decision helper for middleware.ts. No Supabase, no I/O.
 │   ├── catalog/** ..................... VERDE (fetch/adapter/BFF — created later) — MUST return ProductContract[] (S-7)
 │   └── whatsapp.ts .................... VERDE (wa.me builder — created later)
 ├── styles/
@@ -72,6 +78,11 @@ hilitos-website/  (branch: redesign/main)
 ├── eslint.config.mjs .................. SHARED (Violeta/foundation)
 ├── tsconfig.json ...................... SHARED (Violeta/foundation)
 ├── package.json / package-lock.json ... SHARED (Violeta/foundation)
+├── middleware.ts ...................... SHARED (ADM0 §21) — Violeta shared-file approval required (OD-3).
+│                                          Created in Slice S2 (Gate G1 — see §10): exact matcher
+│                                          `/admin/:path*`, cookie-presence routing UX only, zero
+│                                          Supabase/network surface. Approval recorded against
+│                                          `Mission_Packs/HILITOS_ADM1A_S2_IMPLEMENTATION_DISPATCH_2026-07-16.md`.
 └── vercel.json (inert preset) ......... SHARED (Violeta/foundation)
 
 master branch ......................... PRODUCTION (GitHub Pages, hilitos.co) — NEVER TOUCHED by redesign missions
@@ -83,9 +94,11 @@ master branch ......................... PRODUCTION (GitHub Pages, hilitos.co) �
 `postcss.config.mjs`, `eslint.config.mjs`, `tsconfig.json`. Catalog route files
 and `app/robots.ts`/`app/sitemap.ts` transfer to **Verde** (see §7); `app/(admin)/layout.tsx` and
 `app/(admin)/admin.css` transfer to **ADM1a** (see §9). `package.json`/lockfile remain Violeta-shared
-in general, with a narrow, pack-authorized exception for ADM1a-S1's test-runner introduction (§9) —
-`middleware.ts`, introduced in ADM1a-S2, stays explicitly SHARED and requires Violeta's sign-off
-recorded in that slice's PR (OD-3), unlike the files above.
+in general, with a narrow, pack-authorized exception for ADM1a-S1's test-runner introduction (§9).
+`middleware.ts` (introduced in ADM1a-S2 — see §10) stays explicitly **SHARED** and required Violeta's
+sign-off *before* creation, per `VIOLETA SHARED-FILE APPROVAL: HILITOS-ADM1A-S2` recorded against the
+S2 dispatch artifact (OD-3) — unlike the ADM1a-owned files above, any future material change to this
+file requires a fresh Violeta pass.
 
 ### 2.1 · SHELL0 layout topology (post HILITOS-SHELL0)
 
@@ -98,13 +111,15 @@ recorded in that slice's PR (OD-3), unlike the files above.
   Amarillo-owned; cascade order preserved: parent `globals.css` precedes it), the storefront brand
   metadata, and the SkipLink/Header/Footer composition. It renders no `<main>` — each public page
   owns its `<main id="contenido">` (the global SkipLink target).
-- **`(admin)` route group** = the future admin surface. SHELL0 shipped ONLY the inert
-  `app/(admin)/layout.tsx` (children passthrough; no page → no route). As of ADM1a-S1 (§9), the
-  layout is a **pre-auth structural & indexing boundary** (force-dynamic, noindex, admin a11y
-  foundation) — still no page.tsx under `(admin)`, so still no `/admin` route. Sibling route
-  groups do not share layouts, so `(admin)` routes can never inherit the storefront shell. **No
-  session or authorization guard exists in S1** — that arrives in Slice S3, once Slice S2 has
-  introduced `middleware.ts` and the login/shell page skeleton. Not S1, and not SHELL0.
+- **`(admin)` route group** = the admin surface, still pre-auth. SHELL0 shipped ONLY the inert
+  `app/(admin)/layout.tsx` (children passthrough; no page → no route). ADM1a-S1 (§9) hardened the
+  layout into a **pre-auth structural & indexing boundary** (force-dynamic, noindex, admin a11y
+  foundation). **ADM1a-S2 (§10) added the first two admin routes** — `/admin` and `/admin/login`
+  (both honest, non-functional placeholders) — and root-level `middleware.ts` (SHARED, exact matcher
+  `/admin/:path*`, cookie-presence routing UX only). Sibling route groups do not share layouts, so
+  `(admin)` routes still never inherit the storefront shell. **No session or authorization guard
+  exists yet** — cookie presence is not authentication or authorization; real server-side
+  verification (INV-1/INV-3) arrives in Slice S3.
 - **SHELL0 Verde seam exception (bounded, S0-approved):** SHELL0 (Violeta) added **only**
   `id="contenido"` to the existing `<main>` of the three Verde skeletons
   (`(public)/catalogo`, `(public)/productos/[slug]`, `(public)/colecciones/[slug]`) so the skip
@@ -221,3 +236,35 @@ Per `JUANPA GO: HILITOS-ADM1A-SECURITY-FOUNDATION` (2026-07-16) authorizing Slic
 - Unaffected by this slice: every `(public)` route, `app/layout.tsx`, `styles/amarillo.css`,
   `styles/tokens.css`, and all frozen contracts (`lib/contract.ts`, `lib/components.ts`,
   `lib/fixture*.ts`, `catalog.fixture.json`).
+
+## 10 · ADM1a admin-route ownership transfer (Slice S2)
+
+Per `JUANPA SLICE GO: HILITOS-ADM1A-S2` (2026-07-16), implementing the artifact
+`Mission_Packs/HILITOS_ADM1A_S2_IMPLEMENTATION_DISPATCH_2026-07-16.md` (SHA256
+`315252fa2f5b355331c3184f56b01d40425d23a42b0b924c15f73593fadd8d8b`), approved by
+`VIOLETA SHARED-FILE APPROVAL: HILITOS-ADM1A-S2` against that exact artifact:
+
+- `middleware.ts` (new) — **SHARED** (ADM0 §21). Exact matcher `/admin/:path*`; thin adapter over the
+  dependency-free `lib/admin/routing.ts` decision function; cookie-presence routing UX only — no
+  Supabase, no network call, no token/session validation, no database query, no role/authorization
+  decision, no business logic. Any material change to this file invalidates the S2 Violeta approval
+  and requires a fresh shared-file review.
+- `app/(admin)/admin/page.tsx` (`/admin`) and `app/(admin)/admin/login/page.tsx` (`/admin/login`) (new)
+  — **OWNED by ADM1a**. Honest, non-sensitive, non-functional placeholders; neither is, or may ever be
+  described as, securely authenticated. `/admin/login` has no form, no OTP, no email input, nothing
+  that submits — a working login arrives only in Slice S3.
+- `lib/admin/routing.ts` (new) — **OWNED by ADM1a**. `ADMIN_SESSION_COOKIE` placeholder constant (not
+  compatible-by-design with the eventual `@supabase/ssr` cookie contract — Slice S3 owns that) and the
+  pure `decideAdminRouting(pathname, hasCookie)` function. No imports, no I/O, fully unit-testable.
+- `tests/adm1a/s2-route-boundary.test.ts` (new) — the S2-scoped assertion suite (dispatch §12
+  TEST_MATRIX rows 1–23). Building on the runner and first suite S1 introduced, per §9.
+- `tests/adm1a/s1-admin-boundary.test.ts` (modified) — its INV-16/INV-20 check updated: the original
+  S1-era assertion ("no page exists under `(admin)`") is structurally superseded by S2's own mandate to
+  add exactly the two routes above; the check now asserts the routable-entrypoint set equals exactly
+  those two files, never more. Confirmed explicitly with Juanpa before editing, since this file sits
+  outside the S2 dispatch's own closed allowlist.
+- **No dependency or lockfile change of any kind** — `@supabase/ssr` and its client package remain
+  deferred to Slice S3 (per OD-3 and the S2 dispatch §5/§10 PROHIBITED_FILES).
+- Unaffected by this slice: every `(public)` route, all frozen contracts, `app/(admin)/layout.tsx`,
+  `app/(admin)/admin.css` (S1-final, consumed not edited), and every Supabase/Auth/Production/DNS
+  surface — none of which this slice touches, creates, or configures.
