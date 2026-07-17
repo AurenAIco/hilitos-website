@@ -294,10 +294,12 @@ Per `JUANPA SLICE GO: HILITOS-ADM1A-S4` (2026-07-17), implementing the artifact
   grants; `cms.admin_users` (ADM0 §10.1 verbatim) + `updated_at` trigger; the three SECURITY
   DEFINER membership helpers (`cms.is_member()/role()/company()`) with the **pinned-owner
   contract** — each explicitly `ALTER FUNCTION ... OWNER TO service_role` (never implicit
-  ownership) plus `REVOKE EXECUTE ... FROM PUBLIC`; `admin_users` RLS (ENABLE+FORCE), the
-  self-elevation guard trigger, and the last-active-owner guard trigger (an explicit S4 addition
-  beyond ADM0 §10.1, flagged for reviewer approval — strike-able without ripple); `cms.site_change_log`
-  + `cms.site_publications` (ADM0 §10.10/§10.11 verbatim shapes) with their own RLS.
+  ownership) plus `REVOKE EXECUTE ... FROM PUBLIC`; `admin_users` RLS (ENABLE+FORCE) and the
+  self-elevation guard trigger; `cms.site_change_log` + `cms.site_publications` (ADM0
+  §10.10/§10.11 verbatim shapes) with their own RLS. (The dispatch's §5.7 last-active-owner guard
+  trigger was struck post-dispatch — a non-atomic `COUNT(*)` check unsafe under concurrent
+  owner-removal transactions — with no replacement mechanism introduced in this slice; see
+  `docs/adm1a/S4_IDENTITY_CORE_NOTES.md`.)
 - `supabase/scripts/adm1a_s4_owner_bootstrap.sql` (new) — **OWNED by ADM1a**. A one-time, gated,
   idempotent, non-browser-invokable owner-bootstrap SQL script (OD-4/§16.A) — deliberately **not**
   a migration. Rehearsed only against the OD-1 disposable stack with a throwaway

@@ -281,9 +281,11 @@ select throws_ok(
 reset role;
 
 -- ---------------------------------------------------------------------
--- Row 9 — owner invariants: cannot UPDATE/DELETE own row; last-active-
--- owner guard blocks demotion/revocation/deletion of the sole active
--- owner; owner CAN manage other rows in own company.
+-- Row 9 — owner invariants: cannot UPDATE/DELETE own row; owner CAN
+-- manage other rows in own company. (The dispatch's §5.7 last-active-
+-- owner guard was struck post-dispatch — non-atomic COUNT(*) check,
+-- unsafe under concurrent removals — and is not tested here; see B-F1.10
+-- below for the catalog proof that it is absent.)
 -- ---------------------------------------------------------------------
 
 reset role;
@@ -309,47 +311,21 @@ update cms.admin_users set status = 'active' where id = 'a0000000-0000-0000-0000
 
 reset role;
 
--- Last-active-owner guard: only reachable when the DML actually reaches
--- the table despite RLS self-exclusion — i.e. the service_role path with
--- a JWT context set (dispatch §5.8 term 3 / §5.7's own stated rationale:
--- "also constrains accidental privileged-path misuse where a JWT context
--- exists"). owner_a is the sole active owner of company_a in this fixture.
-reset role;
-select set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-0000-0000-000000000001', 'role', 'service_role')::text, true);
-set local role service_role;
-
-select throws_ok(
-  $$update cms.admin_users set role = 'editor' where id = 'a0000000-0000-0000-0000-000000000001'$$,
-  null, null,
-  'B9: last-active-owner guard blocks demoting the sole active owner of company_a'
-);
-select throws_ok(
-  $$update cms.admin_users set status = 'revoked' where id = 'a0000000-0000-0000-0000-000000000001'$$,
-  null, null,
-  'B9: last-active-owner guard blocks revoking the sole active owner of company_a'
-);
-select throws_ok(
-  $$delete from cms.admin_users where id = 'a0000000-0000-0000-0000-000000000001'$$,
-  null, null,
-  'B9: last-active-owner guard blocks deleting the sole active owner of company_a'
-);
-reset role;
-
--- Self-elevation guard, isolated from the last-active-owner guard: target
--- editor_a (not an owner, so the last-owner guard's own-role/status check
--- short-circuits away immediately), same service_role+JWT-context scenario.
--- Proves the self-elevation guard fires on its own merits, not merely as
--- a side effect of the last-owner guard's broader row-removal check.
+-- Self-elevation guard, reachable when the DML actually reaches the table
+-- despite RLS self-exclusion — i.e. the service_role path with a JWT
+-- context set (dispatch §5.8 term 3). Proves the guard fires on its own
+-- merits under a privileged path, not merely via the normal RLS-blocked
+-- authenticated path already covered by B7/B9 above.
 select set_config('request.jwt.claims', json_build_object('sub', 'a0000000-0000-0000-0000-000000000002', 'role', 'service_role')::text, true);
 set local role service_role;
 select throws_ok(
   $$update cms.admin_users set role = 'owner' where id = 'a0000000-0000-0000-0000-000000000002'$$,
   null, null,
-  'B7/B9: self-elevation guard blocks own-row role change even under service_role+JWT context (editor_a, isolated from last-owner guard)'
+  'B7/B9: self-elevation guard blocks own-row role change even under service_role+JWT context (editor_a)'
 );
 reset role;
 
--- A non-self, non-owner-removal change by service_role succeeds normally.
+-- A non-self change by service_role succeeds normally.
 select set_config('request.jwt.claims', '', true);
 set local role service_role;
 select lives_ok(
@@ -649,6 +625,30 @@ from unnest(array['is_member', 'role', 'company']) as fn;
 
 -- B-F1.9 (behavioral half) already covered above: B6 rows for no_member
 -- and revoked_a call all three helpers directly and assert false/NULL.
+
+-- ---------------------------------------------------------------------
+-- B-F1.10 — post-dispatch correction proof: the struck last-active-owner
+-- guard (function + trigger) is catalog-absent, not merely untested.
+-- ---------------------------------------------------------------------
+
+select ok(
+  not exists (
+    select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'cms' and p.proname = 'prevent_last_active_owner_removal'
+  ),
+  'B-F1.10: cms.prevent_last_active_owner_removal() does not exist (struck post-dispatch — non-atomic under concurrent removals)'
+);
+select ok(
+  not exists (
+    select 1 from pg_trigger t
+      join pg_class c on c.oid = t.tgrelid
+      join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'cms' and c.relname = 'admin_users'
+      and t.tgname = 'admin_users_prevent_last_active_owner_removal'
+      and not t.tgisinternal
+  ),
+  'B-F1.10: trigger admin_users_prevent_last_active_owner_removal does not exist on cms.admin_users'
+);
 
 select * from finish();
 rollback;

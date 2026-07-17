@@ -1,7 +1,14 @@
--- ADM1a-S4: cms.admin_users — RLS, self-elevation guard, last-active-owner
--- guard (dispatch §6.1, §5.7, §5.8)
+-- ADM1a-S4: cms.admin_users — RLS, self-elevation guard (dispatch §6.1, §5.8)
 -- Dispatch: HILITOS_ADM1A_S4_IMPLEMENTATION_DISPATCH_2026-07-17.md
 -- (SHA256 1bf1be60b4e65662426bd315f6e0d73359b074b1d9c34015279ea8c380670945)
+--
+-- Post-dispatch correction: the dispatch's §5.7 last-active-owner guard
+-- (a non-atomic COUNT(*)-based trigger) was struck from this migration —
+-- two concurrent owner-removal transactions could each observe the other
+-- owner and both succeed, leaving a company with zero active owners. No
+-- replacement mechanism (advisory lock, row lock, lock table, deferred
+-- constraint) was introduced in this slice; the invariant is unenforced at
+-- the DB layer pending a correctly-serialized design in a later slice.
 
 alter table cms.admin_users enable row level security;
 alter table cms.admin_users force row level security;
@@ -82,59 +89,3 @@ create trigger admin_users_prevent_self_elevation
   before update on cms.admin_users
   for each row
   execute function cms.prevent_admin_users_self_elevation();
-
-
--- Last-active-owner guard (dispatch §5.7 — an explicit S4 addition beyond
--- ADM0 §10.1, flagged for reviewer approval; strike-able without ripple
--- per §19 R-5). Prevents demoting, revoking, or deleting the last active
--- Owner of a company at the DB layer, defending against the §21.3 lockout
--- failure mode.
-create or replace function cms.prevent_last_active_owner_removal()
-returns trigger
-language plpgsql
-set search_path = ''
-as $$
-declare
-  remaining_owners integer;
-  still_active_owner_same_company boolean;
-begin
-  -- Only relevant when the row being changed is currently an active owner.
-  if old.role <> 'owner' or old.status <> 'active' then
-    if tg_op = 'DELETE' then
-      return old;
-    end if;
-    return new;
-  end if;
-
-  if tg_op = 'UPDATE' then
-    still_active_owner_same_company :=
-      new.role = 'owner' and new.status = 'active' and new.company_id = old.company_id;
-    if still_active_owner_same_company then
-      return new;
-    end if;
-  end if;
-
-  select count(*) into remaining_owners
-  from cms.admin_users
-  where company_id = old.company_id
-    and role = 'owner'
-    and status = 'active'
-    and id <> old.id;
-
-  if remaining_owners = 0 then
-    raise exception
-      'admin_users: cannot remove the last active owner of company % (last-active-owner guard, dispatch §5.7)',
-      old.company_id;
-  end if;
-
-  if tg_op = 'DELETE' then
-    return old;
-  end if;
-  return new;
-end;
-$$;
-
-create trigger admin_users_prevent_last_active_owner_removal
-  before update or delete on cms.admin_users
-  for each row
-  execute function cms.prevent_last_active_owner_removal();

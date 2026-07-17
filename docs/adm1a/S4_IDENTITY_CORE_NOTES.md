@@ -64,12 +64,18 @@ SECURITY`. No policy is ever `USING (true)`. Absence of a policy = denial.
   own `id <> auth.uid()` exclusion; specifically guards against
   privileged-path misuse (e.g. `service_role` with a JWT claim set), since
   RLS itself already blocks the normal authenticated path.
-- **Last-active-owner guard** (an explicit S4 addition beyond ADM0 §10.1,
-  flagged for reviewer approval — strike-able without ripple) — the last
-  `active` `owner` row of a `company_id` cannot be demoted, revoked, or
-  deleted. Like the self-elevation guard, this is only reachable via a
-  privileged path in practice, since normal RLS already prevents an Owner
-  from modifying their own row.
+
+**Last-active-owner invariant — NOT enforced at the DB layer.** The
+dispatch's §5.7 last-active-owner guard (a `COUNT(*)`-based trigger) was
+struck post-dispatch: two concurrent owner-removal transactions could each
+observe the other owner and both succeed, leaving a company with zero
+active owners — the guard was non-atomic, not merely incomplete. No
+replacement (advisory lock, row lock, lock table, deferred constraint) was
+introduced in this slice. A company can currently be left without an
+active owner by concurrent DML against a privileged path; the database
+does not prevent this. A correctly-serialized design is deferred to a
+later slice. `supabase/tests/adm1a/s4_identity_rls.sql` B-F1.10
+catalog-proves the function and trigger are absent (not merely untested).
 
 ### `cms.site_change_log` / `cms.site_publications` (ADM0 §10.10/§10.11 verbatim)
 

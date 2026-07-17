@@ -2,10 +2,10 @@
 -- Dispatch: HILITOS_ADM1A_S4_IMPLEMENTATION_DISPATCH_2026-07-17.md
 -- (SHA256 1bf1be60b4e65662426bd315f6e0d73359b074b1d9c34015279ea8c380670945)
 --
--- Table + constraints + updated_at trigger only. RLS, self-elevation guard,
--- and the last-active-owner guard land in the RLS migration (dispatch §9
--- file #5) — kept separate so "table exists" and "table is protected" are
--- independently reviewable and independently testable.
+-- Table + constraints + updated_at trigger only. RLS and the self-elevation
+-- guard land in the RLS migration (dispatch §9 file #5) — kept separate so
+-- "table exists" and "table is protected" are independently reviewable and
+-- independently testable.
 
 create table cms.admin_users (
   -- id = auth.users.id is the *authorization* key (dispatch §5.4): every

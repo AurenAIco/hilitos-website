@@ -100,6 +100,36 @@ test("every SECURITY DEFINER function pins an empty search_path", () => {
   }
 });
 
+// Post-dispatch correction (Opus finding): the dispatch's §5.7
+// last-active-owner guard was a non-atomic COUNT(*) trigger — unsafe under
+// concurrent owner-removal transactions — and was struck with no
+// replacement mechanism. These two checks prove the strike is real and
+// durable: the objects cannot silently reappear in a migration, and no doc
+// can silently re-claim the DB enforces this invariant.
+test("last-active-owner guard function/trigger do not reappear in any S4 migration", () => {
+  assert.doesNotMatch(allMigrationsClean, /prevent_last_active_owner_removal/i);
+  assert.doesNotMatch(allMigrationsClean, /last[-_ ]active[-_ ]owner/i);
+});
+
+test("no documentation claims the database enforces a last-active-owner invariant", () => {
+  const docs = [
+    { name: "docs/OWNERSHIP.md", text: readSrc("docs", "OWNERSHIP.md") },
+    { name: "docs/adm1a/S4_IDENTITY_CORE_NOTES.md", text: readSrc("docs", "adm1a", "S4_IDENTITY_CORE_NOTES.md") },
+  ];
+  for (const { name, text } of docs) {
+    assert.doesNotMatch(
+      text,
+      /last-active-owner guard\s+(blocks|prevents|enforces)/i,
+      `${name} still claims the last-active-owner guard is active`,
+    );
+    assert.doesNotMatch(
+      text,
+      /last\s+`?active`?\s+`?owner`?\s+row[^.]*cannot be (demoted|revoked|deleted)/i,
+      `${name} still claims a last-active-owner invariant is enforced`,
+    );
+  }
+});
+
 // #18 — No secrets.
 test("no service-role key, JWT-like literal, or secret-shaped value in any committed S4 file", () => {
   const allSql = allMigrationsRaw + bootstrapRaw;
