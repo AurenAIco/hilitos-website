@@ -11,9 +11,16 @@
  * uses the id/class/attribute it targets. Future-page conventions:
  *   - Wrap the page's own <main> in id="admin-contenido" (§18, RD-7) — never
  *     the public #contenido id.
- *   - Apply .admin-tap-target to any custom interactive element smaller than
- *     44x44px (buttons/links/inputs already meet the minimum via the base
- *     rule below and need no extra class).
+ *   - Ordinary buttons/inputs/selects/textareas/[role="button"] already meet
+ *     the 44x44 minimum via the base rule below and need no extra class.
+ *     Anchors do NOT — `min-width`/`min-height` have no effect on the
+ *     default `display: inline` of an <a>. Any anchor that needs a
+ *     guaranteed touch target must use the .admin-tap-target class, which
+ *     establishes a dimensionable display mode (inline-flex) as well as the
+ *     size floor. Do not add `a` to the base rule and do not apply
+ *     .admin-tap-target to every future admin anchor by default — only to
+ *     the ones that actually need a guaranteed floor (e.g. icon-only
+ *     controls), so ordinary text links keep their normal inline flow.
  *   - Set aria-invalid="true" on a form field once it fails validation.
  *   - Use aria-live="polite" (or the .admin-status class) on the element
  *     that announces login/session status changes (§18).
@@ -47,12 +54,14 @@
 }
 
 /* ---- Minimum interactive target size (§18: >=44px tap targets) ----
-   Base rule covers ordinary interactive elements automatically; the
-   .admin-tap-target hook covers any custom element that needs the same
-   floor (e.g. an icon-only control) without inheriting other button/link
-   chrome. */
+   Base rule covers only elements whose default display mode actually
+   respects min-width/min-height (button/input/select/textarea are
+   inline-block by default in the UA stylesheet; [role="button"] is
+   included per the same lowest-blast-radius convention). Ordinary <a>
+   anchors are deliberately EXCLUDED here — inline elements ignore
+   min-width/min-height entirely, so including them would be a false claim
+   of compliance, not an enforced floor. */
 button,
-a,
 input,
 select,
 textarea,
@@ -61,7 +70,15 @@ textarea,
   min-width: 44px;
 }
 
+/* Anchor (or other inline-element) touch-target hook: establishes a
+   dimensionable display mode (inline-flex) so the size floor actually
+   takes effect, centers content within it, and stops there — this class
+   is opt-in per element, not a blanket reclassification of every future
+   admin anchor into a flex container. */
 .admin-tap-target {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 44px;
   min-width: 44px;
 }
