@@ -2,10 +2,21 @@
  * app/(admin)/admin.css — ADMIN ACCESSIBILITY FOUNDATION (ADM1a §18).
  * Independent of the public-only styles/amarillo.css, which (admin) does not
  * import (see docs/OWNERSHIP.md, SHELL0 boundary rules). Establishes the
- * baseline admin needs — :focus-visible, prefers-reduced-motion — authored
- * separately rather than extracted from amarillo.css; a shared-base
- * extraction is its own separately reviewed proposal (RD-3), not this slice.
- * Imported only by app/(admin)/layout.tsx.
+ * baseline admin needs authored separately rather than extracted from
+ * amarillo.css; a shared-base extraction is its own separately reviewed
+ * proposal (RD-3), not this slice. Imported only by app/(admin)/layout.tsx.
+ *
+ * S1 ships hooks/base rules only — no admin UI exists yet (no page under
+ * (admin)). Every rule below is inert until a future page's markup actually
+ * uses the id/class/attribute it targets. Future-page conventions:
+ *   - Wrap the page's own <main> in id="admin-contenido" (§18, RD-7) — never
+ *     the public #contenido id.
+ *   - Apply .admin-tap-target to any custom interactive element smaller than
+ *     44x44px (buttons/links/inputs already meet the minimum via the base
+ *     rule below and need no extra class).
+ *   - Set aria-invalid="true" on a form field once it fails validation.
+ *   - Use aria-live="polite" (or the .admin-status class) on the element
+ *     that announces login/session status changes (§18).
  */
 
 /* Future admin skip-link target (RD-7). Never reuses the public #contenido
@@ -33,4 +44,56 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---- Minimum interactive target size (§18: >=44px tap targets) ----
+   Base rule covers ordinary interactive elements automatically; the
+   .admin-tap-target hook covers any custom element that needs the same
+   floor (e.g. an icon-only control) without inheriting other button/link
+   chrome. */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.admin-tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ---- Mobile-safe base (§18: usable at 360-390px, single column) ----
+   Applies to the admin root landmark and any element opting into
+   .admin-container; keeps content within the viewport instead of
+   requiring horizontal scroll. */
+#admin-contenido,
+.admin-container {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline: var(--space-4);
+}
+
+/* ---- Invalid-field state (§18: perceivable without color alone) ----
+   Reuses --barro-hondo (already the AA-critical interactive/text token in
+   styles/tokens.css) rather than inventing a new raw error color; a
+   dedicated error token would be a styles/tokens.css change, which is
+   frozen and out of ADM1a-S1 scope. Pair with aria-describedby text in the
+   future form markup — color/outline alone is never the only signal. */
+[aria-invalid="true"] {
+  outline: 2px solid var(--barro-hondo);
+  outline-offset: 2px;
+}
+
+/* ---- Status/live region hook (§18: announced state changes) ----
+   Targets both the aria-live attribute directly and the .admin-status
+   class, for a future element that doesn't otherwise need aria-live on the
+   same node it's styled from. */
+[aria-live],
+.admin-status {
+  font-size: var(--text-sm);
+  color: var(--text);
 }
