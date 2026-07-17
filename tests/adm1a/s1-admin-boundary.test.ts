@@ -29,19 +29,27 @@ function listFilesRecursive(dir: string): string[] {
   return out;
 }
 
-test("INV-16/INV-20: no routable page or route-handler entrypoint exists under app/(admin)", () => {
+test("INV-16/INV-20: only the S2-approved /admin and /admin/login entrypoints exist under app/(admin) — no other page or route-handler", () => {
   // Static structural check only: an App Router segment needs a page.* or
-  // route.* file to produce a routable path. This does not itself prove
-  // the build's route manifest is clean (a stronger, live integration
-  // proof — see the PR's `npm run build` evidence) — it proves the source
-  // tree contains no entrypoint that could ever produce one.
+  // route.* file to produce a routable path. This test's original S1-era
+  // assertion ("no page exists at all under (admin)") is superseded, not
+  // violated, by Slice S2's own explicit mandate to add exactly two pages
+  // (ADM1a-S2 dispatch §4 ROUTE_CONTRACT: app/(admin)/admin/page.tsx and
+  // app/(admin)/admin/login/page.tsx). This does not itself prove the
+  // build's route manifest is clean (a stronger, live integration proof —
+  // see the PR's `npm run build` evidence) — it proves the source tree
+  // contains no entrypoint beyond those two approved ones.
   const files = listFilesRecursive(ADMIN_DIR);
   const routableEntrypoints = files.filter((f) =>
     /[\\/](page|route)\.(tsx|ts|jsx|js)$/.test(f),
   );
+  const expected = [
+    join(ADMIN_DIR, "admin", "login", "page.tsx"),
+    join(ADMIN_DIR, "admin", "page.tsx"),
+  ].sort();
   assert.deepEqual(
-    routableEntrypoints,
-    [],
+    [...routableEntrypoints].sort(),
+    expected,
     `unexpected routable entrypoint(s) under app/(admin): ${routableEntrypoints.join(", ")}`,
   );
 });

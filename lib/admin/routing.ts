@@ -22,7 +22,7 @@ export type AdminRoutingDecision =
   | { action: "next" }
   | { action: "redirect"; location: "/admin/login" };
 
-function isAdminPath(pathname: string): boolean {
+function pathnameIsWithinAdminScope(pathname: string): boolean {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
@@ -42,7 +42,7 @@ export function decideAdminRouting(
   pathname: string,
   hasCookie: boolean,
 ): AdminRoutingDecision {
-  if (!isAdminPath(pathname)) {
+  if (!pathnameIsWithinAdminScope(pathname)) {
     return { action: "next" };
   }
   if (pathname === "/admin/login") {
