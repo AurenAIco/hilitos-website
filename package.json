@@ -12,6 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "fixture-lint": "tsx lib/fixture.schema.ts",
+    "fixture-lint:v2": "tsx lib/fixture.schema.v2.ts",
     "test": "node --import tsx --test tests/**/*.test.ts"
   },
   "dependencies": {

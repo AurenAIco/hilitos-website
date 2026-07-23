@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 2,
+  "categories": [
+    { "slug": "ajuares-y-estuches", "name": null, "description": null, "image": null },
+    { "slug": "batas", "name": null, "description": null, "image": null },
+    { "slug": "conjuntos", "name": null, "description": null, "image": null },
+    { "slug": "mantas-y-cobijas", "name": null, "description": null, "image": null },
+    { "slug": "mamelucos", "name": null, "description": null, "image": null },
+    { "slug": "amigurumis", "name": null, "description": null, "image": null }
+  ],
+  "designs": [
+    {
+      "designRef": "9001",
+      "slug": "fixture-v2-synthetic-9001",
+      "name": "FIXTURE SINTÉTICO 9001 (no es inventario real)",
+      "description": "Dato de prueba para lib/fixture.schema.v2.ts — no representa un producto real de Hilitos. Cubre: featuredRank 1, imagen con LQIP.",
+      "category": "ajuares-y-estuches",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9001-crudo.jpg",
+        "alt": "FIXTURE SINTÉTICO 9001 — Crudo",
+        "placeholder": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAKAAgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD74ooor589M//Z",
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 111100,
+      "colors": [{ "name": "Crudo", "hex": "#E7DCC8" }],
+      "sizes": ["RN"],
+      "featuredRank": 1,
+      "variants": [
+        {
+          "ref": "9001-CRUDO",
+          "color": { "name": "Crudo", "hex": "#E7DCC8" },
+          "size": "RN",
+          "price": 111100,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9001-crudo.jpg",
+            "alt": "FIXTURE SINTÉTICO 9001 — Crudo",
+            "placeholder": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAKAAgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD74ooor589M//Z",
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9002",
+      "slug": "fixture-v2-synthetic-9002",
+      "name": "FIXTURE SINTÉTICO 9002 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: featuredRank 2, imagen sin LQIP.",
+      "category": "batas",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9002-lila.jpg",
+        "alt": "FIXTURE SINTÉTICO 9002 — Lila",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 92200,
+      "colors": [{ "name": "Lila", "hex": "#C9B8D8" }],
+      "sizes": ["0"],
+      "featuredRank": 2,
+      "variants": [
+        {
+          "ref": "9002-LILA-T0",
+          "color": { "name": "Lila", "hex": "#C9B8D8" },
+          "size": "0",
+          "price": 92200,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9002-lila.jpg",
+            "alt": "FIXTURE SINTÉTICO 9002 — Lila",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9003",
+      "slug": "fixture-v2-synthetic-9003",
+      "name": "FIXTURE SINTÉTICO 9003 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: featuredRank 3, multi-talla mismo color.",
+      "category": "conjuntos",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9003-beige-t3.jpg",
+        "alt": "FIXTURE SINTÉTICO 9003 — Beige",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 79900,
+      "colors": [{ "name": "Beige", "hex": "#D9C9B7" }],
+      "sizes": ["3", "6"],
+      "featuredRank": 3,
+      "variants": [
+        {
+          "ref": "9003-BEIGE-T3",
+          "color": { "name": "Beige", "hex": "#D9C9B7" },
+          "size": "3",
+          "price": 79900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9003-beige-t3.jpg",
+            "alt": "FIXTURE SINTÉTICO 9003 — Beige",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9003-BEIGE-T6",
+          "color": { "name": "Beige", "hex": "#D9C9B7" },
+          "size": "6",
+          "price": 79900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9003-beige-t6.jpg",
+            "alt": "FIXTURE SINTÉTICO 9003 — Beige",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9004",
+      "slug": "fixture-v2-synthetic-9004",
+      "name": "FIXTURE SINTÉTICO 9004 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: featuredRank 4, talla UNICA.",
+      "category": "mantas-y-cobijas",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9004-celeste.jpg",
+        "alt": "FIXTURE SINTÉTICO 9004 — Celeste",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 65500,
+      "colors": [{ "name": "Celeste", "hex": "#BFE0E8" }],
+      "sizes": ["UNICA"],
+      "featuredRank": 4,
+      "variants": [
+        {
+          "ref": "9004-CELESTE",
+          "color": { "name": "Celeste", "hex": "#BFE0E8" },
+          "size": "UNICA",
+          "price": 65500,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9004-celeste.jpg",
+            "alt": "FIXTURE SINTÉTICO 9004 — Celeste",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9005",
+      "slug": "fixture-v2-synthetic-9005",
+      "name": "FIXTURE SINTÉTICO 9005 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: featuredRank 5, multi-color misma talla.",
+      "category": "mamelucos",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9005-celeste-t0.jpg",
+        "alt": "FIXTURE SINTÉTICO 9005 — Celeste",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 68900,
+      "colors": [
+        { "name": "Celeste", "hex": "#BFE0E8" },
+        { "name": "Rosado", "hex": "#F0C9D6" }
+      ],
+      "sizes": ["0"],
+      "featuredRank": 5,
+      "variants": [
+        {
+          "ref": "9005-CELESTE-T0",
+          "color": { "name": "Celeste", "hex": "#BFE0E8" },
+          "size": "0",
+          "price": 68900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9005-celeste-t0.jpg",
+            "alt": "FIXTURE SINTÉTICO 9005 — Celeste",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9005-ROSADO-T0",
+          "color": { "name": "Rosado", "hex": "#F0C9D6" },
+          "size": "0",
+          "price": 68900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9005-rosado-t0.jpg",
+            "alt": "FIXTURE SINTÉTICO 9005 — Rosado",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9006",
+      "slug": "fixture-v2-synthetic-9006",
+      "name": "FIXTURE SINTÉTICO 9006 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: featuredRank 6, diseño de una sola variante.",
+      "category": "amigurumis",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9006-blanco.jpg",
+        "alt": "FIXTURE SINTÉTICO 9006 — Blanco",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 76000,
+      "colors": [{ "name": "Blanco", "hex": "#FFFFFF" }],
+      "sizes": ["UNICA"],
+      "featuredRank": 6,
+      "variants": [
+        {
+          "ref": "9006-BLANCO",
+          "color": { "name": "Blanco", "hex": "#FFFFFF" },
+          "size": "UNICA",
+          "price": 76000,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9006-blanco.jpg",
+            "alt": "FIXTURE SINTÉTICO 9006 — Blanco",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "designRef": "9007",
+      "slug": "fixture-v2-synthetic-9007",
+      "name": "FIXTURE SINTÉTICO 9007 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: diseño con stock mixto (una variante available, una sold_out); featuredRank null.",
+      "category": "ajuares-y-estuches",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9007-beige-celeste.jpg",
+        "alt": "FIXTURE SINTÉTICO 9007 — Beige/Celeste",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 87900,
+      "colors": [
+        { "name": "Beige/Celeste", "hex": null },
+        { "name": "Blanco/Amarillo", "hex": null }
+      ],
+      "sizes": ["RN"],
+      "featuredRank": null,
+      "variants": [
+        {
+          "ref": "9007-BEIGE-CELESTE",
+          "color": { "name": "Beige/Celeste", "hex": null },
+          "size": "RN",
+          "price": 87900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9007-beige-celeste.jpg",
+            "alt": "FIXTURE SINTÉTICO 9007 — Beige/Celeste",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9007-BLANCO-AMARILLO",
+          "color": { "name": "Blanco/Amarillo", "hex": null },
+          "size": "RN",
+          "price": 87900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9007-blanco-amarillo.jpg",
+            "alt": "FIXTURE SINTÉTICO 9007 — Blanco/Amarillo",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "sold_out"
+        }
+      ]
+    },
+    {
+      "designRef": "9008",
+      "slug": "fixture-v2-synthetic-9008",
+      "name": "FIXTURE SINTÉTICO 9008 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: diseño totalmente agotado (todas las variantes sold_out); featuredRank null obligatorio.",
+      "category": "batas",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9008-coral-t0.jpg",
+        "alt": "FIXTURE SINTÉTICO 9008 — Coral",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "sold_out",
+      "priceFrom": 91900,
+      "colors": [{ "name": "Coral", "hex": "#F4A79D" }],
+      "sizes": ["0", "3"],
+      "featuredRank": null,
+      "variants": [
+        {
+          "ref": "9008-CORAL-T0",
+          "color": { "name": "Coral", "hex": "#F4A79D" },
+          "size": "0",
+          "price": 91900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9008-coral-t0.jpg",
+            "alt": "FIXTURE SINTÉTICO 9008 — Coral",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "sold_out"
+        },
+        {
+          "ref": "9008-CORAL-T3",
+          "color": { "name": "Coral", "hex": "#F4A79D" },
+          "size": "3",
+          "price": 91900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9008-coral-t3.jpg",
+            "alt": "FIXTURE SINTÉTICO 9008 — Coral",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "sold_out"
+        }
+      ]
+    },
+    {
+      "designRef": "9009",
+      "slug": "fixture-v2-synthetic-9009",
+      "name": "FIXTURE SINTÉTICO 9009 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: diseño disperso multi-color/multi-talla — NO es la matriz completa color × talla (faltan Beige-T6 y Celeste-T0 a propósito).",
+      "category": "conjuntos",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9009-beige-t0.jpg",
+        "alt": "FIXTURE SINTÉTICO 9009 — Beige",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 84900,
+      "colors": [
+        { "name": "Beige", "hex": "#D9C9B7" },
+        { "name": "Celeste", "hex": "#BFE0E8" }
+      ],
+      "sizes": ["0", "3", "6"],
+      "featuredRank": null,
+      "variants": [
+        {
+          "ref": "9009-BEIGE-T0",
+          "color": { "name": "Beige", "hex": "#D9C9B7" },
+          "size": "0",
+          "price": 84900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9009-beige-t0.jpg",
+            "alt": "FIXTURE SINTÉTICO 9009 — Beige",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9009-BEIGE-T3",
+          "color": { "name": "Beige", "hex": "#D9C9B7" },
+          "size": "3",
+          "price": 84900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9009-beige-t3.jpg",
+            "alt": "FIXTURE SINTÉTICO 9009 — Beige",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9009-CELESTE-T3",
+          "color": { "name": "Celeste", "hex": "#BFE0E8" },
+          "size": "3",
+          "price": 84900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9009-celeste-t3.jpg",
+            "alt": "FIXTURE SINTÉTICO 9009 — Celeste",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9009-CELESTE-T6",
+          "color": { "name": "Celeste", "hex": "#BFE0E8" },
+          "size": "6",
+          "price": 84900,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9009-celeste-t6.jpg",
+            "alt": "FIXTURE SINTÉTICO 9009 — Celeste",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "sold_out"
+        }
+      ]
+    },
+    {
+      "designRef": "9010",
+      "slug": "fixture-v2-synthetic-9010",
+      "name": "FIXTURE SINTÉTICO 9010 (no es inventario real)",
+      "description": "Dato de prueba — no representa un producto real de Hilitos. Cubre: colorways ordenados distintos — Blanco/Rosado y Rosado/Blanco NO deben fusionarse.",
+      "category": "mantas-y-cobijas",
+      "primaryImage": {
+        "url": "/fixtures/synthetic-v2/9010-blanco-rosado.jpg",
+        "alt": "FIXTURE SINTÉTICO 9010 — Blanco/Rosado",
+        "placeholder": null,
+        "width": 800,
+        "height": 1000
+      },
+      "availability": "available",
+      "priceFrom": 71000,
+      "colors": [
+        { "name": "Blanco/Rosado", "hex": null },
+        { "name": "Rosado/Blanco", "hex": null }
+      ],
+      "sizes": ["UNICA"],
+      "featuredRank": null,
+      "variants": [
+        {
+          "ref": "9010-BLANCO-ROSADO",
+          "color": { "name": "Blanco/Rosado", "hex": null },
+          "size": "UNICA",
+          "price": 71000,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9010-blanco-rosado.jpg",
+            "alt": "FIXTURE SINTÉTICO 9010 — Blanco/Rosado",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        },
+        {
+          "ref": "9010-ROSADO-BLANCO",
+          "color": { "name": "Rosado/Blanco", "hex": null },
+          "size": "UNICA",
+          "price": 71000,
+          "image": {
+            "url": "/fixtures/synthetic-v2/9010-rosado-blanco.jpg",
+            "alt": "FIXTURE SINTÉTICO 9010 — Rosado/Blanco",
+            "placeholder": null,
+            "width": 800,
+            "height": 1000
+          },
+          "availability": "available"
+        }
+      ]
+    }
+  ]
+}
