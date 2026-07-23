@@ -18,6 +18,13 @@ import { join } from "node:path";
 
 const ROOT = process.cwd();
 const BASELINE_SHA = "d74415c00c9bcb76fefd8e2485344861b8a94472";
+// The S4 closure: PR #6 (redesign/adm/adm1a-s4-local-identity-rls-foundation)
+// merged into redesign/main as this exact, immutable merge commit. The two
+// scope-audit tests below (#24 §9 allowlist, package.json/-lock zero-diff)
+// must prove the historical S4 implementation only — bounding them to this
+// fixed SHA instead of the ever-moving HEAD is what keeps them from
+// re-litigating every later, unrelated slice (e.g. G1a) forever.
+const S4_CLOSURE_SHA = "fcfc4b64ec4e5b1f376ae6bf3bdae6f6b59cac7d";
 
 function readSrc(...segments: string[]): string {
   return readFileSync(join(ROOT, ...segments), "utf8");
@@ -157,7 +164,9 @@ test("config.toml keeps cms out of [api].schemas, keeps enable_signup=false, and
   assert.ok(apiSchemasMatch, "could not locate [api].schemas in config.toml");
   assert.doesNotMatch(apiSchemasMatch[1], /cms/i);
 
-  const authSectionMatch = configToml.match(/\[auth\]\n([\s\S]*?)(?:\n\[|$)/);
+  // \r?\n (not a bare \n) so this still locates the [auth] section on
+  // Windows checkouts where config.toml is materialized with CRLF.
+  const authSectionMatch = configToml.match(/\[auth\]\r?\n([\s\S]*?)(?:\r?\n\[|$)/);
   assert.ok(authSectionMatch, "could not locate [auth] section in config.toml");
   assert.match(authSectionMatch[1], /enable_signup\s*=\s*false/);
 
@@ -229,32 +238,39 @@ const S4_ALLOWED_FILES = new Set([
   ...migrationFiles.map((name) => `supabase/migrations/${name}`),
 ]);
 
-function listChangedFilesSinceBaseline(): string[] {
-  const out = execFileSync("git", ["diff", "--name-only", `${BASELINE_SHA}...HEAD`], {
-    cwd: ROOT,
-    encoding: "utf8",
-  });
+function listChangedFilesDuringS4Closure(): string[] {
+  const out = execFileSync(
+    "git",
+    ["diff", "--name-only", `${BASELINE_SHA}...${S4_CLOSURE_SHA}`],
+    { cwd: ROOT, encoding: "utf8" },
+  );
   return out.split("\n").map((l) => l.trim()).filter(Boolean);
 }
 
-test("git diff scope proof: every changed file so far is inside the closed §9 allowlist", () => {
-  const changed = listChangedFilesSinceBaseline();
+test("git diff scope proof: every file changed by the historical S4 closure is inside the §9 allowlist", () => {
+  const changed = listChangedFilesDuringS4Closure();
   const isPgtapFile = (f: string) => /^supabase\/tests\/adm1a\/s4_.*\.sql$/.test(f);
   const outside = changed.filter((f) => !S4_ALLOWED_FILES.has(f) && !isPgtapFile(f));
   assert.deepEqual(
     outside,
     [],
-    `file(s) outside the S4 §9 allowlist entered the diff: ${outside.join(", ")}`,
+    `file(s) outside the S4 §9 allowlist were part of the historical S4 closure: ${outside.join(", ")}`,
   );
 });
 
-test("package.json / package-lock.json diff vs. baseline is 0 lines", () => {
+test("package.json / package-lock.json diff across the historical S4 closure is 0 lines (S4 added no dependency)", () => {
   for (const file of ["package.json", "package-lock.json"]) {
-    const diff = execFileSync("git", ["diff", `${BASELINE_SHA}...HEAD`, "--", file], {
-      cwd: ROOT,
-      encoding: "utf8",
-    });
-    assert.equal(diff.trim(), "", `unexpected diff in ${file}`);
+    const diff = execFileSync(
+      "git",
+      ["diff", `${BASELINE_SHA}...${S4_CLOSURE_SHA}`, "--", file],
+      { cwd: ROOT, encoding: "utf8" },
+    );
+    assert.equal(
+      diff.trim(),
+      "",
+      `S4 must not have touched ${file} — this proves S4 itself added no dependency/script, ` +
+        `not that ${file} must stay frozen for every later slice`,
+    );
   }
 });
 
