@@ -115,3 +115,82 @@ export interface CatalogFixture {
   categories: CategoryContract[];
   collections: CollectionContract[];
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STOREFRONT CATALOG V2 — additive grouped Design→Variants seam (Gate G1a).
+// FROZEN (Violeta) — reuses ImageContract/ColorContract/CategoryContract above
+// UNCHANGED. Additive only: the flat ProductContract/CollectionContract/
+// CatalogFixture above are untouched and remain the live consumer seam until a
+// separate migration slice repoints Amarillo/Verde. Do NOT import this block
+// from any runtime consumer (ProductCard, homepage, routes, admin, middleware)
+// in this slice — see lib/fixture.v2.ts / catalog.contract.v2.fixture.json.
+// Never-exposed fields (company_id, exact stock, agent_sales_copy,
+// ai_visibility*, last_verified_at, verified_by, deleted_at, internal ids)
+// remain forbidden on every type below.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Strict six-category union — frozen, final (no reopen). */
+export type CategorySlug =
+  | "ajuares-y-estuches"
+  | "batas"
+  | "conjuntos"
+  | "mantas-y-cobijas"
+  | "mamelucos"
+  | "amigurumis";
+
+/** Public storefront availability — exactly two states. No made_to_order. */
+export type StorefrontAvailability = "available" | "sold_out";
+
+/** Featured rail rank — restricted literal union, never an unrestricted number. */
+export type FeaturedRank = 1 | 2 | 3 | 4 | 5 | 6;
+
+/** ---- StorefrontVariant (one SKU within a design) ---- */
+export interface StorefrontVariant {
+  /** Full SKU ref, e.g. "2814-BLANCO-ROSADO". Unique across the whole catalog. */
+  ref: string;
+  /** Single colorway descriptor. Reuses ColorContract unchanged. */
+  color: ColorContract;
+  /** Single talla token, e.g. "RN" | "0" | "3" | "6" | "12" | "UNICA". */
+  size: string;
+  /** COP integer price, always > 0. Invalid-price variants are excluded before emit. */
+  price: number;
+  /** Valid, non-null image. Reuses ImageContract unchanged. */
+  image: ImageContract;
+  availability: StorefrontAvailability;
+}
+
+/** ---- StorefrontDesign (one storefront card; grouping key = numeric base ref) ---- */
+export interface StorefrontDesign {
+  /** Numeric base ref (grouping key), e.g. "4194". Unique across designs. */
+  designRef: string;
+  /** URL slug for /productos/[slug]. Unique, lowercase, hyphenated. */
+  slug: string;
+  /** Display name (es-CO), family-level (variant color/size stripped). */
+  name: string;
+  /** Public description. Never null — use "" when unset. */
+  description: string;
+  /** Strict six-category union. Must exist in StorefrontCatalogV2.categories. */
+  category: CategorySlug;
+  /** Non-null cover image: the designated cover variant's image, else a deterministic valid variant image. */
+  primaryImage: ImageContract;
+  /** Derived: "sold_out" iff every emitted variant is sold_out; else "available". */
+  availability: StorefrontAvailability;
+  /** Derived: minimum emitted variant price (COP integer > 0). */
+  priceFrom: number;
+  /** Derived: distinct ColorContract projection of emitted variants. */
+  colors: ColorContract[];
+  /** Derived: distinct size projection of emitted variants. */
+  sizes: string[];
+  /** 1–6, unique across the catalog; null when not featured or when sold_out. */
+  featuredRank: FeaturedRank | null;
+  /** ≥1 emitted variant; explicit & sparse — NOT a full color × size matrix. */
+  variants: StorefrontVariant[];
+}
+
+/** ---- StorefrontCatalogV2 (grouped fixture/response envelope) ---- */
+export interface StorefrontCatalogV2 {
+  schemaVersion: 2;
+  /** Exactly the six frozen category slugs, in frozen order. */
+  categories: CategoryContract[];
+  designs: StorefrontDesign[];
+}
