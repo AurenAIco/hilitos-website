@@ -21,7 +21,7 @@ export function Header() {
         <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
               className="flex min-h-11 items-center text-sm text-tinta transition-colors duration-[var(--duration-fast)] hover:text-barro-hondo"
             >

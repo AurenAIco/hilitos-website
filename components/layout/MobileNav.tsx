@@ -115,7 +115,7 @@ export function MobileNav() {
 
       {open
         ? createPortal(
-            <div className="fixed inset-0 z-50">
+            <div className="fixed inset-0 z-50 md:hidden">
               <button
                 type="button"
                 aria-hidden="true"
@@ -147,7 +147,7 @@ export function MobileNav() {
                 <nav aria-label="Principal (móvil)" className="flex flex-col">
                   {NAV_ITEMS.map((item) => (
                     <Link
-                      key={item.href}
+                      key={item.label}
                       href={item.href}
                       onClick={close}
                       className="border-b border-hairline py-3.5 text-lg text-tinta hover:text-barro-hondo"
