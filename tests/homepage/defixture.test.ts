@@ -108,14 +108,30 @@ test("homepage's only product-data imports are the live V2 catalog path", () => 
 
 // ── 6. Empty/unavailable catalog cannot create product cards ───────────────
 
-test("homepage forces an empty featured list when the live catalog is unavailable (result.catalog is null)", () => {
+test("homepage forces an empty featured list unless this request's fetch was fresh (status 'ok' AND a non-null catalog)", () => {
   // Static proof of the exact guard: featured is derived from
-  // `result.catalog ? getFeaturedDesigns(result.catalog) : []` — never a
-  // fallback to fixture data or an unconditional call on a possibly-null catalog.
+  // `result.status === "ok" && result.catalog ? getFeaturedDesigns(result.catalog) : []`
+  // — never a fallback to fixture data, never an unconditional call on a
+  // possibly-null catalog, and (Opus review, S1 stale-honesty finding) never
+  // on the "stale" last-good catalog, which getStorefrontCatalog() also
+  // returns with a NON-null `catalog`. See tests/homepage/home-featured-gate
+  // .test.ts for the behavioural proof that this expression yields [] for
+  // both "stale" and "unavailable" against real CatalogResult values.
   assert.match(
     homepageCode,
-    /const\s+featured\s*=\s*result\.catalog\s*\?\s*getFeaturedDesigns\(result\.catalog\)\s*:\s*\[\]/,
-    "expected homepage to force featured=[] when result.catalog is null/unavailable",
+    /const\s+featured\s*=\s*result\.status\s*===\s*"ok"\s*&&\s*result\.catalog\s*\?\s*getFeaturedDesigns\(result\.catalog\)\s*:\s*\[\]/,
+    "expected homepage to force featured=[] unless status is 'ok' and catalog is non-null",
+  );
+});
+
+test("homepage never renders featured designs off a non-'ok' catalog (no bare `result.catalog ?` gate survives)", () => {
+  // Guards the specific regression this fix closes: a gate that tests only
+  // `result.catalog` lets the "stale" branch through, because status "stale"
+  // carries last-good data in `catalog`.
+  assert.equal(
+    /const\s+featured\s*=\s*result\.catalog\s*\?/.test(homepageCode),
+    false,
+    "the featured gate must not be reduced back to a bare `result.catalog ?` check",
   );
 });
 
