@@ -2,12 +2,24 @@
 // Server Component. Renders ONLY the approved static editorial/brand content
 // plus, optionally, the live StorefrontCatalogV2 featured-designs rail
 // (lib/catalog/storefront.ts) — never the V1 fixture (lib/fixture.ts /
-// catalog.fixture.json). When the live catalog is unavailable or has no
-// featured designs yet, the featured rail renders nothing: this page must
-// never show a synthetic product, price, reference, or availability label.
+// catalog.fixture.json). The rail renders ONLY on a fresh ("ok") fetch: when
+// the live catalog is unavailable, when it is "stale" last-good data, or when
+// it simply has no featured designs yet, the rail renders nothing and this
+// page stays purely editorial. It must never show a synthetic product, and
+// never a real price/reference/availability the visitor could believe is
+// current when it is not.
 // Copy uses only facts already published by the brand on the live site
 // (hilitos.co). The named traps ("más de 500 familias", testimonials) are
 // deliberately NOT carried over even though the legacy site shows them.
+//
+// Why "stale" is excluded rather than disclosed here: getStorefrontCatalog()'s
+// fallback contract requires every caller that renders "stale" data to show a
+// visible last-good indicator (see components/catalog/CatalogStatusBanner.tsx,
+// used by /catalogo and /productos/[slug]). The homepage is editorial, not a
+// catalog surface, so it opts out of rendering that data at all instead of
+// carrying a banner — the honest option that needs no disclosure. Note that
+// getStorefrontCatalog() returns a NON-null `catalog` for "stale" too, so the
+// gate below must test `status`, not just `catalog`.
 import Image from "next/image";
 import { getFeaturedDesigns, getStorefrontCatalog } from "@/lib/catalog/storefront";
 import { Section } from "@/components/ui/Section";
@@ -25,7 +37,10 @@ export const revalidate = 300;
 
 export default async function HomePage() {
   const result = await getStorefrontCatalog();
-  const featured = result.catalog ? getFeaturedDesigns(result.catalog) : [];
+  const featured =
+    result.status === "ok" && result.catalog
+      ? getFeaturedDesigns(result.catalog)
+      : [];
 
   return (
     <main id="contenido">
@@ -59,8 +74,8 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 2 · Featured designs (live V2 catalog only; renders nothing when
-          the catalog is unavailable or has no featured designs) */}
+      {/* 2 · Featured designs (fresh live V2 catalog only; renders nothing
+          when the catalog is unavailable, stale, or has no featured designs) */}
       <FeaturedDesigns designs={featured} />
 
       {/* 3 · Catalog-entry / search visual band (NO search logic — link only) */}
