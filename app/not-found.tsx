@@ -1,14 +1,18 @@
 // app/not-found.tsx — S3 branded errors (Amarillo pattern reuse). ROOT-LEVEL
-// 404: this is the only boundary Next.js falls back to for a genuinely
-// unmatched URL (e.g. a bogus path, or /productos or /colecciones with no
-// slug), and it is also where an explicit notFound() call from
-// productos/[slug]/page.tsx bubbles to, since no closer not-found.tsx exists
-// under app/(public)/. Because it sits outside the (public) route group, it
-// does not automatically inherit that group's layout — so it re-composes the
-// same SkipLink/Header/Footer shell (unmodified components, verbatim usage)
-// and re-imports styles/amarillo.css so focus-visible, the skip link, and
-// #contenido's scroll offset all still work here. No fixture/product data is
-// imported.
+// 404 for URLs that match NO route at all and therefore enter no route group:
+// a bogus top-level path, or /productos and /colecciones with no slug. Such a
+// request activates only app/layout.tsx (html/body/fonts/globals.css), so this
+// boundary must bring the storefront shell itself — it re-composes the same
+// SkipLink/Header/Footer (unmodified components, verbatim usage) and re-imports
+// styles/amarillo.css so focus-visible, the skip link, and #contenido's scroll
+// offset all still work here. No fixture/product data is imported.
+//
+// NOT the boundary for notFound() raised INSIDE the (public) group — that is
+// app/(public)/not-found.tsx, which renders content only because
+// app/(public)/layout.tsx has already supplied the shell. Adding the shell here
+// as well is what produced the duplicate landmarks fixed in that file; see its
+// header and tests/errors/s3-notfound-composition.test.ts. Keep the two
+// boundaries' rendered copy identical — one 404 voice for the storefront.
 import "@/styles/amarillo.css";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";

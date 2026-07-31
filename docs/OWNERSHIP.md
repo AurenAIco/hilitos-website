@@ -24,12 +24,27 @@ hilitos-website/  (branch: redesign/main)
 │   ├── layout.tsx ..................... SHARED (Violeta/SHELL0) — MINIMAL ROOT: html/body, lang,
 │   │                                      fonts, globals.css, metadataBase, children. NO surface chrome.
 │   ├── globals.css .................... SHARED (Violeta/foundation) — Tailwind entry + token→theme mapping
+│   ├── not-found.tsx .................. OWNED by S3 (branded errors — see §2.1): ROOT 404 for URLs that
+│   │                                      match no route and enter no route group. Composes the shell
+│   │                                      itself (SkipLink/Header/Footer + amarillo.css) because only
+│   │                                      app/layout.tsx is active. NOT the in-group notFound() boundary.
+│   ├── global-error.tsx ............... OWNED by S3: root FATAL boundary. Client Component; renders its
+│   │                                      OWN <html>/<body> — the single documented exception to the
+│   │                                      single-root invariant (§2.1). Dependency-light by design:
+│   │                                      no next/font, no app component beyond next/link.
 │   ├── (public)/
 │   │   ├── layout.tsx ................. SHARED (Violeta/SHELL0) — PUBLIC STOREFRONT SHELL:
 │   │   │                                  imports styles/amarillo.css; storefront metadata
 │   │   │                                  (title/description/openGraph); composes SkipLink/
 │   │   │                                  Header/{children}/Footer (Amarillo components,
 │   │   │                                  moved verbatim, never redesigned here). NO <main>.
+│   │   │                                  SOLE provider of the public shell — boundaries below add none.
+│   │   ├── not-found.tsx .............. OWNED by S3: 404 for notFound() raised INSIDE the group. CONTENT
+│   │   │                                  ONLY — no SkipLink/Header/Footer, no amarillo.css (the layout
+│   │   │                                  above already supplies them). Owns its <main id="contenido">.
+│   │   ├── error.tsx .................. OWNED by S3: route-level runtime error boundary for the group.
+│   │   │                                  Client Component (Next.js contract). Owns its <main
+│   │   │                                  id="contenido">. Never renders error.message/stack/digest.
 │   │   ├── page.tsx  (/) .............. OWNED by AMARILLO
 │   │   ├── nosotros/page.tsx .......... OWNED by AMARILLO
 │   │   ├── privacy/page.tsx ........... OWNED by AMARILLO (content: Mónica/legal)
@@ -106,6 +121,25 @@ file requires a fresh Violeta pass.
   Grotesk (variables for every surface), `globals.css` (Tailwind + tokens **unlayered** + `@theme`
   + body base), `metadataBase` only, `{children}`. Nested layouts must NEVER add a second
   `<html>`/`<body>` (single-root invariant).
+  - **The one documented exception** (S3): `app/global-error.tsx`. Per the Next.js contract a
+    global-error boundary REPLACES the root layout for that render, so it must render its own
+    `<html>`/`<body>` or the fallback has no document at all. It is the only file in the repo
+    allowed to do so; `app/not-found.tsx`, `app/(public)/not-found.tsx` and `app/(public)/error.tsx`
+    must not, and `tests/errors/s3-notfound-composition.test.ts` asserts this.
+- **Error/404 boundaries (S3) — who provides the shell.** A boundary renders inside every layout
+  already active for the matched route, so exactly one of the two must compose SkipLink/Header/Footer:
+  - `app/not-found.tsx` — URLs that match no route and enter no route group (a bogus top-level path,
+    `/productos` and `/colecciones` with no slug). Only `app/layout.tsx` is active, so this boundary
+    brings the shell itself and re-imports `styles/amarillo.css`.
+  - `app/(public)/not-found.tsx` — `notFound()` raised by a page INSIDE the group (today only
+    `(public)/productos/[slug]`). `app/(public)/layout.tsx` has already rendered the shell, so this
+    boundary renders **content only**: no SkipLink/Header/Footer, no `amarillo.css` import. Composing
+    the shell here too is what produced duplicate banner/contentinfo landmarks, duplicate skip links
+    and two MobileNav instances sharing `aria-controls="menu-movil"`.
+  - `app/(public)/error.tsx` — route-level runtime errors under `(public)`. Client Component per the
+    Next.js contract; renders the sole `<main id="contenido">` while the group layout supplies the
+    shell around it. Never reads `error.message`/`stack`/`digest`.
+  - `app/(public)/layout.tsx` remains the **sole provider of the public shell** in every case.
 - **`(public)` route group** = the storefront surface. `app/(public)/layout.tsx` owns the single
   `import "@/styles/amarillo.css"` (relocated from root by SHELL0 — file content untouched,
   Amarillo-owned; cascade order preserved: parent `globals.css` precedes it), the storefront brand
