@@ -10,6 +10,7 @@ import assert from "node:assert/strict";
 import {
   CANONICAL_PRODUCTION_HOSTNAMES,
   isCanonicalProductionHostname,
+  isNonProductionVercelEnv,
   resolveSiteUrl,
   type SiteUrlEnv,
 } from "@/lib/seo/siteUrl";
@@ -174,4 +175,96 @@ test("isCanonicalProductionHostname is true only for hilitos.co and www.hilitos.
 
 test("CANONICAL_PRODUCTION_HOSTNAMES contains exactly the two real Hilitos domains", () => {
   assert.deepEqual([...CANONICAL_PRODUCTION_HOSTNAMES].sort(), ["hilitos.co", "www.hilitos.co"]);
+});
+
+// ── isNonProductionVercelEnv (the crawl-safety guard, F18) ──────────────────
+
+test("isNonProductionVercelEnv is true for preview, development, and any custom environment", () => {
+  assert.equal(isNonProductionVercelEnv({ VERCEL_ENV: "preview" }), true);
+  assert.equal(isNonProductionVercelEnv({ VERCEL_ENV: "development" }), true);
+  assert.equal(isNonProductionVercelEnv({ VERCEL_ENV: "staging" }), true, "unknown environments must fail closed");
+});
+
+test("isNonProductionVercelEnv is false for production and when off-Vercel", () => {
+  assert.equal(isNonProductionVercelEnv({ VERCEL_ENV: "production" }), false);
+  assert.equal(isNonProductionVercelEnv({}), false, "off-Vercel is handled by the hostname check, not this guard");
+  assert.equal(isNonProductionVercelEnv({ VERCEL_ENV: "  " }), false, "whitespace-only is treated as unset");
+});
+
+// ── Origin normalization hardening (F3 / F5) ────────────────────────────────
+
+test("a mixed-case configured hostname normalizes to a lowercase origin", () => {
+  for (const value of ["https://HILITOS.CO", "https://HiLiToS.Co", "https://WWW.HILITOS.CO"]) {
+    const { origin, hostname } = resolveSiteUrl({ NEXT_PUBLIC_SITE_URL: value });
+    assert.equal(origin, origin.toLowerCase(), `origin must be lowercase for ${value}`);
+    assert.equal(hostname, hostname.toLowerCase());
+    assert.equal(origin.endsWith(hostname), true, `origin (${origin}) and hostname (${hostname}) must agree`);
+  }
+  assert.equal(resolveSiteUrl({ NEXT_PUBLIC_SITE_URL: "https://HILITOS.CO" }).origin, "https://hilitos.co");
+});
+
+test("a mixed-case Vercel-supplied host normalizes too — origin and hostname can never disagree (F5)", () => {
+  const { origin, hostname } = resolveSiteUrl({
+    VERCEL: "1",
+    VERCEL_ENV: "production",
+    VERCEL_PROJECT_PRODUCTION_URL: "HILITOS.CO",
+  });
+  assert.equal(origin, "https://hilitos.co");
+  assert.equal(hostname, "hilitos.co");
+  assert.equal(origin.endsWith(hostname), true);
+});
+
+test("a Vercel host arriving with a trailing slash or surrounding whitespace is normalized, not concatenated blindly (F5)", () => {
+  assert.equal(
+    resolveSiteUrl({ VERCEL: "1", VERCEL_ENV: "preview", VERCEL_URL: "preview-x.vercel.app/" }).origin,
+    "https://preview-x.vercel.app",
+  );
+  assert.equal(
+    resolveSiteUrl({ VERCEL: "1", VERCEL_ENV: "preview", VERCEL_URL: "  preview-x.vercel.app  " }).origin,
+    "https://preview-x.vercel.app",
+  );
+});
+
+test("a port on a public origin is rejected, so it can never masquerade as the canonical domain (F3)", () => {
+  assert.throws(
+    () => resolveSiteUrl({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co:8443" }),
+    (err: unknown) => err instanceof Error && err.message.includes("port"),
+  );
+});
+
+test("a port on localhost is still allowed (local development convenience)", () => {
+  assert.equal(resolveSiteUrl({ NEXT_PUBLIC_SITE_URL: "http://localhost:4000" }).origin, "http://localhost:4000");
+});
+
+test("every resolvable origin is free of path, query, fragment and trailing slash", () => {
+  const cases: SiteUrlEnv[] = [
+    { NEXT_PUBLIC_SITE_URL: "https://hilitos.co/" },
+    { NEXT_PUBLIC_SITE_URL: "https://HILITOS.CO" },
+    { VERCEL: "1", VERCEL_ENV: "preview", VERCEL_URL: "preview-x.vercel.app" },
+    { VERCEL: "1", VERCEL_ENV: "production", VERCEL_PROJECT_PRODUCTION_URL: "hilitos.co" },
+    {},
+  ];
+  for (const env of cases) {
+    const { origin } = resolveSiteUrl(env);
+    assert.equal(origin.endsWith("/"), false, `trailing slash in ${origin}`);
+    assert.equal(origin.includes("?"), false);
+    assert.equal(origin.includes("#"), false);
+    // exactly one "//" — the scheme separator; no stray path segment
+    assert.equal(origin.split("/").length, 3, `unexpected path segment in ${origin}`);
+    assert.equal(new URL(origin).origin, origin, "origin must be its own normalized form");
+  }
+});
+
+test("VERCEL_PROJECT_PRODUCTION_URL is ignored on a preview deployment even though Vercel sets it there (F2/F18)", () => {
+  // Vercel sets this variable on EVERY deployment, previews included. If the
+  // production guard in resolveVercelOrigin were dropped, this would resolve
+  // to https://hilitos.co and light up the canonical check.
+  const { origin, hostname } = resolveSiteUrl({
+    VERCEL: "1",
+    VERCEL_ENV: "preview",
+    VERCEL_URL: "hilitos-website-git-test.vercel.app",
+    VERCEL_PROJECT_PRODUCTION_URL: "hilitos.co",
+  });
+  assert.equal(origin, "https://hilitos-website-git-test.vercel.app");
+  assert.equal(isCanonicalProductionHostname(hostname), false);
 });

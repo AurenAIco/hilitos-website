@@ -41,13 +41,29 @@ outcomes" contract as `STOREFRONT_IMAGE_HOST`.
 1. `NEXT_PUBLIC_SITE_URL`, if set and valid.
 2. A Vercel-supplied deployment origin, if running on Vercel (`VERCEL` is
    set) and no override is configured:
-   - `VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_ENV=production` (the
-     project's own stable alias — **not** the real custom domain until
-     cutover, see below);
+   - `VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_ENV=production`;
    - otherwise `VERCEL_URL` (that specific preview/branch deployment's own
      unique host).
    Both are set automatically by Vercel's build system — nothing to
    configure.
+
+   ⚠️ **`VERCEL_PROJECT_PRODUCTION_URL` — accurate semantics.** Vercel
+   defines it as *"the shortest production **custom** domain or vercel.app
+   domain"*, and it **is always set, including on preview deployments**.
+   Two consequences, both corrected here after an independent review found
+   the earlier description wrong:
+   - It is **not** guaranteed to be a `*.vercel.app` alias. Once
+     `hilitos.co` is **attached to the Vercel project**, this variable
+     resolves to `hilitos.co` itself — with nobody setting any environment
+     variable. **Production-origin resolution therefore changes at domain
+     attachment, not at the `NEXT_PUBLIC_SITE_URL` step.** Do not treat
+     "no env var configured" as proof that the resolved origin is still
+     non-canonical.
+   - Because it is present in previews too, the `VERCEL_ENV === "production"`
+     condition in `resolveVercelOrigin` is load-bearing: without it every
+     preview would resolve to the production origin.
+
+   Neither point controls crawling — see the next section.
 3. `http://localhost:3000` — only reached when neither of the above
    applies, i.e. not running under Vercel at all. This app's only deploy
    target is Vercel (`next.config.ts`'s RE-2 comment), so "not on Vercel" is
@@ -57,25 +73,60 @@ None of these are secrets: `NEXT_PUBLIC_SITE_URL` is already client-public
 by its Next.js naming convention, and the `VERCEL_*` variables are
 non-secret deployment metadata (flags/hostnames).
 
-## Why `app/robots.ts` blocks every origin except `hilitos.co`
+## Why preview deployments are blocked from crawling
 
 The live production site (GitHub Pages, `master` branch) is `hilitos.co`
 today. This redesign must never be indexed until an authorized **Gate A6**
 DNS cutover (Juanpa + Mónica — see `docs/OWNERSHIP.md` §6–7) points that
-domain at this app. Until then:
+domain at this app.
 
-- Every Vercel preview deployment — and this project's own Vercel
-  **production** alias (e.g. `hilitos-website.vercel.app`), which is
-  resolved as a valid Vercel origin above but is **not** the real custom
-  domain — gets `Disallow: /`.
-- Local development gets `Disallow: /`.
-- Only a resolved origin whose hostname is exactly `hilitos.co` or
-  `www.hilitos.co` (`lib/seo/siteUrl.ts`'s `isCanonicalProductionHostname`)
-  gets `Allow: /` plus a `sitemap:` reference. In practice that only
-  happens once `NEXT_PUBLIC_SITE_URL=https://hilitos.co` (or an equivalent
-  custom-domain wiring) is configured **and** the domain has actually been
-  cut over — the code capability exists now, but nothing in this slice
-  flips it on.
+`app/robots.ts` decides crawlability with **two guards, in this order**:
+
+**Guard 1 — `VERCEL_ENV` (checked first, takes precedence over
+`NEXT_PUBLIC_SITE_URL`).** Any Vercel deployment whose `VERCEL_ENV` is
+something other than `production` — `preview`, `development`, or any custom
+environment — gets a blanket `Disallow: /` **regardless of which origin
+resolved**.
+
+This guard exists because the hostname check alone was **not** sufficient.
+An independent review reproduced a preview deployment emitting `Allow: /`
+and `Sitemap: https://hilitos.co/sitemap.xml` simply because
+`NEXT_PUBLIC_SITE_URL=https://hilitos.co` had been saved in Vercel's
+**Preview** scope as well as Production — which is Vercel's *default*, since
+its "add variable" UI pre-checks Production, Preview **and** Development.
+
+**Guard 2 — canonical hostname.** Only a resolved origin whose hostname is
+exactly `hilitos.co` or `www.hilitos.co`
+(`lib/seo/siteUrl.ts`'s `isCanonicalProductionHostname`) gets `Allow: /`
+plus a `sitemap:` reference. Local development and any non-canonical Vercel
+production alias (e.g. `hilitos-website.vercel.app`) both fail here.
+
+Resulting matrix:
+
+| Environment | robots.txt |
+|---|---|
+| `VERCEL_ENV=preview` (any origin, canonical or not) | `Disallow: /` |
+| `VERCEL_ENV=development` | `Disallow: /` |
+| any custom `VERCEL_ENV` (e.g. `staging`) | `Disallow: /` |
+| `VERCEL_ENV=production` + non-canonical alias | `Disallow: /` |
+| `VERCEL_ENV=production` + `hilitos.co` / `www.hilitos.co` | `Allow: /`, `Disallow: /admin`, `Sitemap:` |
+| local development (no Vercel vars) | `Disallow: /` |
+
+**Crawling does not open exclusively through the `NEXT_PUBLIC_SITE_URL`
+step.** Because `VERCEL_PROJECT_PRODUCTION_URL` becomes the production
+**custom** domain once `hilitos.co` is attached to the Vercel project (see
+the resolution section above), a *production* deployment can satisfy guard 2
+with no environment variable set by anyone. **Attaching the domain is itself
+a Gate A6 action** — treat it, not the env var, as the moment crawlability
+becomes live, and confirm both are authorized together.
+
+### Scoping `NEXT_PUBLIC_SITE_URL` when you do configure it
+
+Scope it to the **Production environment only**. After this correction,
+selecting Preview scope no longer opens crawling (guard 1 blocks it), but it
+is still unnecessary and should be avoided: it makes previews resolve
+metadata and sitemap URLs against the production origin, which is misleading
+when debugging a preview.
 
 ## Why a rebuild is required
 
@@ -94,10 +145,15 @@ practical consequence as `docs/STOREFRONT_IMAGE_HOST.md`'s
 NEXT_PUBLIC_SITE_URL=https://hilitos.co
 ```
 
-Set in the Vercel project's environment variables (never committed), then
-redeploy. This does not, by itself, perform the DNS cutover or attach the
-domain to Vercel — those remain separate, explicitly authorized Gate A6
-actions.
+Set in the Vercel project's environment variables (never committed), scoped
+to **Production only** (see the scoping note above), then redeploy. This
+does not, by itself, perform the DNS cutover or attach the domain to
+Vercel — those remain separate, explicitly authorized Gate A6 actions.
+
+Reminder from above: attaching `hilitos.co` to the Vercel project can make
+production builds resolve the canonical origin **on its own**, so sequence
+the attachment and the crawl-open decision deliberately rather than assuming
+the env var is the only trigger.
 
 ## S7B / follow-up residuals (not fixed in S7A — recorded, not crossed)
 
