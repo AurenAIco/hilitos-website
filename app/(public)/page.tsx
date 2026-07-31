@@ -1,39 +1,31 @@
-// app/page.tsx — Homepage (AMARILLO, HILITOS-P1A-AMARILLO §6C).
-// Server Component. Product content comes EXCLUSIVELY from the committed
-// fixture (server-side import, S-5). Copy uses only facts already published
-// by the brand on the live site (hilitos.co) or clearly-marked placeholders
-// pending Mónica (§13). The named traps ("más de 500 familias", testimonials)
-// are deliberately NOT carried over even though the legacy site shows them.
+// app/(public)/page.tsx — Homepage (S1 de-fixture pass).
+// Server Component. Renders ONLY the approved static editorial/brand content
+// plus, optionally, the live StorefrontCatalogV2 featured-designs rail
+// (lib/catalog/storefront.ts) — never the V1 fixture (lib/fixture.ts /
+// catalog.fixture.json). When the live catalog is unavailable or has no
+// featured designs yet, the featured rail renders nothing: this page must
+// never show a synthetic product, price, reference, or availability label.
+// Copy uses only facts already published by the brand on the live site
+// (hilitos.co). The named traps ("más de 500 familias", testimonials) are
+// deliberately NOT carried over even though the legacy site shows them.
 import Image from "next/image";
-import { products, collections } from "@/lib/fixture";
+import { getFeaturedDesigns, getStorefrontCatalog } from "@/lib/catalog/storefront";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { Reveal } from "@/components/ui/Reveal";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
-import { PendingBlock } from "@/components/editorial/PendingBlock";
-import { ProductCard } from "@/components/product/ProductCard";
+import { FeaturedDesigns } from "@/components/product/FeaturedDesigns";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
 
-const SPOTLIGHT_COLLECTION = "esenciales";
+// Route-segment config: kept numerically identical to lib/catalog/storefront.ts's
+// CATALOG_REVALIDATE_SECONDS (same convention as app/(public)/catalogo/page.tsx) —
+// if you change one, change both.
+export const revalidate = 300;
 
-export default function HomePage() {
-  const featured = products.filter((p) => p.featured === true);
-  const categorySlugs = Array.from(
-    new Set(products.map((p) => p.category).filter((c): c is string => c !== null)),
-  );
-  const spotlight = collections.find((c) => c.slug === SPOTLIGHT_COLLECTION);
-  const spotlightProducts = products
-    .filter((p) => p.collection === SPOTLIGHT_COLLECTION)
-    .slice(0, 3);
-  // A hand-made piece for the craft section. The fixture's hand-made row also
-  // happens to carry no images, so it exercises the branded ImagePlaceholder
-  // fallback on the homepage (the null-price fallback is proven by ref 2288 in
-  // the collection spotlight) — satisfying the S3 "prove the fallbacks" intent.
-  const handmadePiece = products.find(
-    (p) => p.collection === "hechos-a-mano" && p.images.length === 0,
-  );
+export default async function HomePage() {
+  const result = await getStorefrontCatalog();
+  const featured = result.catalog ? getFeaturedDesigns(result.catalog) : [];
 
   return (
     <main id="contenido">
@@ -67,48 +59,11 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* 2 · Category shortcuts (labels pending Mónica; links to planned /catalogo) */}
-      <Section labelledBy="categorias-titulo" className="pt-0">
-        <EditorialHeading as="h2" id="categorias-titulo" className="text-2xl">
-          Explora por categoría
-        </EditorialHeading>
-        <ul className="mt-6 flex flex-wrap gap-2.5">
-          {categorySlugs.map((slug) => (
-            <li key={slug}>
-              <Button href="/catalogo" variant="secondary" className="capitalize">
-                {slug.replace(/-/g, " ")}
-              </Button>
-            </li>
-          ))}
-        </ul>
-        <PendingBlock className="mt-5 max-w-2xl">
-          Los nombres visibles de las categorías (hoy se muestran los slugs del
-          fixture) y sus destinos definitivos requieren la lista aprobada.
-        </PendingBlock>
-      </Section>
+      {/* 2 · Featured designs (live V2 catalog only; renders nothing when
+          the catalog is unavailable or has no featured designs) */}
+      <FeaturedDesigns designs={featured} />
 
-      {/* 3 · Featured products (fixture featured: true) */}
-      <Section labelledBy="destacados-titulo" className="border-y border-hairline bg-marfil">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <EditorialHeading as="h2" id="destacados-titulo" className="text-3xl">
-            Piezas destacadas del archivo
-          </EditorialHeading>
-          <Button href="/catalogo" variant="ghost">
-            Ver todo el catálogo →
-          </Button>
-        </div>
-        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6">
-          {featured.map((product, i) => (
-            <li key={product.ref}>
-              <Reveal delayMs={i * 90}>
-                <ProductCard product={product} priority={i === 0} />
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* 4 · Catalog-entry / search visual band (NO search logic — link only) */}
+      {/* 3 · Catalog-entry / search visual band (NO search logic — link only) */}
       <Section bleed labelledBy="banda-catalogo-titulo" className="bg-crudo/50">
         <Container className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -135,33 +90,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* 5 · Collection spotlight (editorial copy pending Mónica) */}
-      <Section labelledBy="coleccion-titulo">
-        <div className="grid gap-10 md:grid-cols-[2fr_3fr] md:items-center">
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-barro-hondo">Colección</p>
-            <EditorialHeading as="h2" id="coleccion-titulo" className="mt-2 text-3xl capitalize">
-              {spotlight?.title ?? spotlight?.slug.replace(/-/g, " ") ?? "Colección"}
-            </EditorialHeading>
-            <PendingBlock className="mt-4">
-              Título editorial, descripción e imagen de la colección. Hoy se
-              muestra el slug del fixture.
-            </PendingBlock>
-            <Button href={`/colecciones/${SPOTLIGHT_COLLECTION}`} variant="secondary" className="mt-6">
-              Ver la colección
-            </Button>
-          </div>
-          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {spotlightProducts.map((product) => (
-              <li key={product.ref}>
-                <ProductCard product={product} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Section>
-
-      {/* 6 · Craft and history */}
+      {/* 4 · Craft and history */}
       <Section bleed labelledBy="oficio-titulo" className="bg-sage/15">
         <Container className="grid items-center gap-10 md:grid-cols-2">
           <div className="relative order-last aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo md:order-first">
@@ -187,19 +116,11 @@ export default function HomePage() {
                 Conoce nuestra historia →
               </Button>
             </div>
-            {handmadePiece ? (
-              <figure className="mt-8 w-40">
-                <ProductCard product={handmadePiece} />
-                <figcaption className="mt-2 text-xs text-text-muted">
-                  Una pieza hecha a mano del taller.
-                </figcaption>
-              </figure>
-            ) : null}
           </div>
         </Container>
       </Section>
 
-      {/* 7 · Trust / purchase process (describes the site's own WhatsApp loop) */}
+      {/* 5 · Trust / purchase process (describes the site's own WhatsApp loop) */}
       <Section labelledBy="proceso-titulo">
         <EditorialHeading as="h2" id="proceso-titulo" className="text-3xl">
           Así de simple
@@ -232,7 +153,7 @@ export default function HomePage() {
         </ol>
       </Section>
 
-      {/* 8 · Neutral craft-quality (NO testimonials/counts — not verified) */}
+      {/* 6 · Neutral craft-quality (NO testimonials/counts — not verified) */}
       <Section bleed labelledBy="calidad-titulo" className="bg-crudo/50">
         <Container className="grid items-center gap-10 md:grid-cols-2">
           <div className="max-w-lg">
@@ -244,10 +165,6 @@ export default function HomePage() {
               etiquetas colgantes de un taller. La referencia que ves aquí es
               la misma con la que confirmas tu prenda por WhatsApp.
             </p>
-            <PendingBlock className="mt-5">
-              Sección de prueba social (testimonios / cifras verificadas). Sin
-              contenido verificado no se publica ningún claim.
-            </PendingBlock>
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
@@ -261,7 +178,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* 9 · FAQ (published brand answers + marked pending items) */}
+      {/* 7 · FAQ (published brand answers only) */}
       <Section labelledBy="faq-titulo">
         <EditorialHeading as="h2" id="faq-titulo" className="text-3xl">
           Preguntas frecuentes
@@ -300,14 +217,10 @@ export default function HomePage() {
               </p>
             </details>
           ))}
-          <PendingBlock className="mt-6">
-            FAQs de envíos, pagos y cambios: requieren confirmación de las
-            políticas vigentes antes de publicarse en el rediseño.
-          </PendingBlock>
         </div>
       </Section>
 
-      {/* 10 · Final WhatsApp CTA */}
+      {/* 8 · Final WhatsApp CTA */}
       <Section bleed labelledBy="cta-final-titulo" className="bg-marfil">
         <Container className="flex flex-col items-center border-y border-hairline py-14 text-center">
           <ThreadMotif className="mb-6 max-w-64" />
