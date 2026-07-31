@@ -16,9 +16,18 @@ import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 export const metadata: Metadata = {
   title: "Nosotros",
+  // Reuses this page's own approved hero copy verbatim — no new claim
+  // invented for SEO purposes.
+  description:
+    "Hilitos es un taller de ajuar artesanal para bebés en Bucaramanga, Colombia. Cada ajuar es tejido a mano con fibras naturales seleccionadas para la piel más delicada.",
+  alternates: {
+    canonical: `${resolveSiteUrl().origin}/nosotros`,
+  },
 };
 
 export default function NosotrosPage() {
@@ -60,7 +69,7 @@ export default function NosotrosPage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button href="/catalogo">Ver el catálogo</Button>
-            <WhatsAppCTA />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
           </div>
         </div>
       </Section>

@@ -13,8 +13,8 @@
 // (years-of-operation, family tradition, GDPR/certifications) slipped in.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, extname } from "node:path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const ROOT = process.cwd();
 
@@ -135,37 +135,19 @@ test("nosotros page's remaining CTA link targets /catalogo (an existing approved
   assert.match(nosotrosSrc, /href="\/catalogo"/);
 });
 
-// ---- PendingBlock: no remaining usage on either S4-owned page, but the ------
-// ---- shared component stays untouched because the homepage (out of S4's ---
-// ---- scope) still consumes it -----------------------------------------------
-
-const RUNTIME_DIRS = ["app", "components"];
-const SOURCE_EXTENSIONS = new Set([".ts", ".tsx"]);
-
-function walk(dir: string, files: string[] = []): string[] {
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    const stat = statSync(full);
-    if (stat.isDirectory()) {
-      if (entry === "node_modules" || entry === ".next") continue;
-      walk(full, files);
-    } else if (SOURCE_EXTENSIONS.has(extname(entry))) {
-      files.push(full);
-    }
-  }
-  return files;
-}
+// ---- PendingBlock: no remaining usage on either S4-owned page ---------------
+//
+// Wave 1 integration note: when this suite was written, S4 landed alone and
+// the homepage (app/(public)/page.tsx, out of S4's scope) still imported
+// PendingBlock — so the original version of this test pinned "exactly one
+// remaining consumer: the homepage". Integrated together with S1 (which
+// de-fixtures the homepage and drops that import as part of the same pass),
+// that consumer no longer exists anywhere, so PendingBlock has zero
+// remaining runtime consumers and was deleted outright rather than kept
+// around unused. See tests/integration/pendingblock-deleted.test.ts for the
+// integration-level proof.
 
 test("PendingBlock is not imported anywhere under app/(public)/privacy or app/(public)/nosotros", () => {
   assert.equal(privacySrc.includes("PendingBlock"), false);
   assert.equal(nosotrosSrc.includes("PendingBlock"), false);
-});
-
-test("PendingBlock component still exists and still has exactly one remaining runtime consumer: the homepage (out of S4 scope, not touched)", () => {
-  const runtimeFiles = RUNTIME_DIRS.flatMap((dir) => walk(join(ROOT, dir)));
-  const consumers = runtimeFiles.filter(
-    (file) => !file.endsWith(join("editorial", "PendingBlock.tsx")) && readFileSync(file, "utf8").includes("PendingBlock"),
-  );
-  const relConsumers = consumers.map((f) => f.slice(ROOT.length + 1).replace(/\\/g, "/"));
-  assert.deepEqual(relConsumers, ["app/(public)/page.tsx"], `expected PendingBlock's only remaining consumer to be the homepage, got: ${relConsumers.join(", ")}`);
 });

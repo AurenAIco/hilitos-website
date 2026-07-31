@@ -74,7 +74,10 @@ export function getCollectionMeta(slug: CategorySlug, catalog?: StorefrontCatalo
   const fallback = COLLECTION_META_ES[slug];
   const fromCatalog = catalog?.categories.find((c) => c.slug === slug);
   return {
-    title: fromCatalog?.name ?? fallback.title,
+    // A blank or whitespace-only backend name must fall back to the Spanish
+    // default rather than render an empty <h1> — `??` alone only catches
+    // null/undefined, not "" or "   ".
+    title: fromCatalog?.name?.trim() || fallback.title,
     description: fromCatalog?.description ?? fallback.description,
   };
 }

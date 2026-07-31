@@ -184,3 +184,41 @@ the env var is the only trigger.
   Verde's catalog data layer (`lib/catalog/**`) before they can be added
   without inventing URLs — see the `S7B EXTENSION POINT` comment in that
   file.
+
+## S7B disposition (Wave 1 integration, `integration/storefront-wave1-legal-seo`)
+
+Route-level title/description/canonical closed for the five routes the
+integration mandate named, plus one additional residual that turned out to
+fit cleanly. See `tests/integration/s7b-route-metadata.test.ts` for the
+behavioral proof of every item below.
+
+**Closed:**
+
+- `/`, `/catalogo`, `/nosotros`, `/privacy` — each now has a meaningful
+  Spanish `description` (reusing copy already approved and live elsewhere
+  in the same page/Footer — no new claim invented) and an
+  `alternates.canonical` built from `lib/seo/siteUrl.ts`'s `resolveSiteUrl()`,
+  the same S7A resolver `app/sitemap.ts` and `app/layout.tsx`'s
+  `metadataBase` already use. `/`'s title uses `title: { absolute: … }` to
+  bypass `app/(public)/layout.tsx`'s `"%s · Hilitos"` template — a plain
+  string there would have rendered as `"… Hilitos · Hilitos"`.
+- `/colecciones/[slug]` — S2's dynamic `getCollectionMeta()`-sourced
+  title/description is unchanged; `generateMetadata` now also returns
+  `alternates.canonical` for each of the six frozen slugs. An invalid slug
+  still returns only `{ title: "Colección" }` (no canonical) — the page
+  component calls `notFound()` for that same slug, so a canonical pointing
+  at a route that 404s would be self-contradictory.
+- `/productos/[slug]` (residual, closed rather than deferred): its existing
+  `generateMetadata` already calls `getStorefrontCatalog()` once and has
+  `design` in scope, so adding `alternates.canonical` for a resolved design
+  fit without a second backend fetch or broader refactor, per the
+  integration mandate's own fit test. An unresolved slug (fetch
+  unavailable, or the slug doesn't exist) still returns only
+  `{ title: "Producto" }` — no canonical — matching the collections
+  fail-closed contract.
+
+**Still residual (unchanged from the list above — not touched by this
+integration):** OG image / full brand OG-Twitter copy, Apple touch icon,
+social-preview image, and dynamic sitemap entries for `/productos/[slug]`
+and `/colecciones/[slug]` (no enumerable published-slug source exists yet;
+`app/sitemap.ts` still lists exactly the same four static routes).

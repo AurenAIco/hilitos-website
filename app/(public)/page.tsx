@@ -20,6 +20,7 @@
 // carrying a banner — the honest option that needs no disclosure. Note that
 // getStorefrontCatalog() returns a NON-null `catalog` for "stale" too, so the
 // gate below must test `status`, not just `catalog`.
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getFeaturedDesigns, getStorefrontCatalog } from "@/lib/catalog/storefront";
 import { Section } from "@/components/ui/Section";
@@ -29,11 +30,27 @@ import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
 import { FeaturedDesigns } from "@/components/product/FeaturedDesigns";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // Route-segment config: kept numerically identical to lib/catalog/storefront.ts's
 // CATALOG_REVALIDATE_SECONDS (same convention as app/(public)/catalogo/page.tsx) —
 // if you change one, change both.
 export const revalidate = 300;
+
+// S7B route metadata closure. `title.absolute` (not a plain string) bypasses
+// app/(public)/layout.tsx's "%s · Hilitos" template — a plain string here
+// would render as "…Hilitos · Hilitos". Description reuses copy already
+// approved and live elsewhere on this same page/Footer (Bucaramanga origin,
+// hand-woven material) — no new claim invented for SEO purposes.
+export const metadata: Metadata = {
+  title: { absolute: "Hilitos — Ajuar artesanal tejido a mano para bebés" },
+  description:
+    "Ajuar artesanal tejido a mano para bebés en Bucaramanga, Colombia. Prendas suaves y naturales, ideales para la piel más delicada.",
+  alternates: {
+    canonical: resolveSiteUrl().origin,
+  },
+};
 
 export default async function HomePage() {
   const result = await getStorefrontCatalog();
@@ -58,7 +75,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button href="/catalogo">Ver el catálogo</Button>
-              <WhatsAppCTA />
+              <WhatsAppCTA href={buildGenericWhatsAppHref()} />
             </div>
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
@@ -246,7 +263,7 @@ export default async function HomePage() {
             Cuéntanos qué necesitas y te ayudamos a elegir la prenda ideal.
           </p>
           <div className="mt-7">
-            <WhatsAppCTA />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
           </div>
         </Container>
       </Section>

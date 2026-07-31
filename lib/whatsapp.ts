@@ -9,9 +9,9 @@
 // from NEXT_PUBLIC_WHATSAPP_NUMBER — a PUBLIC env var by necessity, because
 // a WhatsApp "click-to-chat" business number is meant to be visible in the
 // rendered href (it is not a secret, unlike a Supabase key). When the env
-// var is unset, every builder below returns null and callers fall back to
-// WhatsAppCTA's existing honest placeholder href — never a believable-but-
-// fake link.
+// var is unset, every builder below returns null and WhatsAppCTA renders a
+// disabled, non-interactive control instead (slice S6) — never a fake,
+// believable-but-broken placeholder href.
 import type { StorefrontDesign, StorefrontVariant } from "@/lib/contract";
 
 const RAW_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || "";

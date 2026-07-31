@@ -11,10 +11,14 @@
 import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 export const metadata: Metadata = {
   title: "Privacidad",
   description: "Política de privacidad de Hilitos: qué información recopilamos y cómo la usamos.",
+  alternates: {
+    canonical: `${resolveSiteUrl().origin}/privacy`,
+  },
 };
 
 export default function PrivacyPage() {

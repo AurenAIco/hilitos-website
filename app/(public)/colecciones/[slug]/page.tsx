@@ -15,6 +15,7 @@ import { Section } from "@/components/ui/Section";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { DesignCard } from "@/components/product/DesignCard";
 import { CatalogStatusBanner } from "@/components/catalog/CatalogStatusBanner";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // See app/(public)/catalogo/page.tsx's identical note: this must be a static
 // literal, kept in sync with lib/catalog/storefront.ts's
@@ -26,11 +27,20 @@ type Params = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   if (!isCollectionSlug(slug)) {
+    // No canonical for an invalid slug — the page component below still
+    // calls notFound() for this same slug; a canonical pointing at a route
+    // that 404s would be self-contradictory.
     return { title: "Colección" };
   }
   const result = await getStorefrontCatalog();
   const meta = getCollectionMeta(slug, result.catalog);
-  return { title: meta.title, description: meta.description };
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      canonical: `${resolveSiteUrl().origin}/colecciones/${slug}`,
+    },
+  };
 }
 
 export default async function ColeccionPage({ params }: Params) {

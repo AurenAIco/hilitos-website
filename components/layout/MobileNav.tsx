@@ -24,6 +24,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { WhatsAppCTA } from "./WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -157,7 +158,7 @@ export function MobileNav() {
                   ))}
                 </nav>
                 <div className="mt-4">
-                  <WhatsAppCTA className="w-full" />
+                  <WhatsAppCTA className="w-full" href={buildGenericWhatsAppHref()} />
                 </div>
               </div>
             </div>,

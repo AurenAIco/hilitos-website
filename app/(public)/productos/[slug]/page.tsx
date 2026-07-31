@@ -16,6 +16,7 @@ import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { CatalogStatusBanner } from "@/components/catalog/CatalogStatusBanner";
 import { VariantSelector, type ResolvedVariantImageUrls } from "@/components/product/VariantSelector";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // See app/(public)/catalogo/page.tsx's identical note: this must be a static
 // literal, kept in sync with lib/catalog/storefront.ts's
@@ -28,7 +29,19 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const result = await getStorefrontCatalog();
   const design = result.catalog ? getDesignBySlug(result.catalog, slug) : undefined;
-  return { title: design ? design.name : "Producto" };
+  // No canonical when the design can't be resolved (unavailable catalog or
+  // unknown slug) — the page below either shows the honest "unavailable"
+  // state or calls notFound() for this same slug; either way there is no
+  // resolved page to canonicalize.
+  if (!design) {
+    return { title: "Producto" };
+  }
+  return {
+    title: design.name,
+    alternates: {
+      canonical: `${resolveSiteUrl().origin}/productos/${slug}`,
+    },
+  };
 }
 
 export default async function ProductoPage({ params }: Params) {

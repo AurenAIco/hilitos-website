@@ -167,6 +167,32 @@ test("getCollectionMeta falls back to the Spanish default when the catalog's cat
   assert.deepEqual(withCatalog, fallback);
 });
 
+// Wave 1 integration hardening: `??` alone only catches null/undefined, so a
+// backend category name of "" or "   " previously survived to become the
+// rendered <h1> — an empty or whitespace-only heading. getCollectionMeta now
+// trims and treats a blank result as absent, same as the null case above.
+test("getCollectionMeta falls back to the Spanish default title when the catalog's category name is an empty string", () => {
+  const catalog = makeCatalog([], { batas: { name: "" } });
+  const fallback = getCollectionMeta("batas");
+  const withCatalog = getCollectionMeta("batas", catalog);
+  assert.equal(withCatalog.title, fallback.title);
+  assert.ok(withCatalog.title.length > 0, "title must never be empty");
+});
+
+test("getCollectionMeta falls back to the Spanish default title when the catalog's category name is whitespace-only", () => {
+  const catalog = makeCatalog([], { conjuntos: { name: "   " } });
+  const fallback = getCollectionMeta("conjuntos");
+  const withCatalog = getCollectionMeta("conjuntos", catalog);
+  assert.equal(withCatalog.title, fallback.title);
+  assert.ok(withCatalog.title.trim().length > 0, "title must never be empty or whitespace-only");
+});
+
+test("getCollectionMeta trims incidental surrounding whitespace off an otherwise-real catalog name", () => {
+  const catalog = makeCatalog([], { mamelucos: { name: "  Mamelucos de invierno  " } });
+  const meta = getCollectionMeta("mamelucos", catalog);
+  assert.equal(meta.title, "Mamelucos de invierno");
+});
+
 // ---- resolveCollectionView (route states) ----------------------------------
 
 test("resolveCollectionView: unavailable (fetch failed, no last-good) — honest unavailable state for every slug", () => {
