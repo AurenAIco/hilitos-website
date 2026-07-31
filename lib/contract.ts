@@ -33,9 +33,9 @@ export interface ImageContract {
   /** base64 LQIP for next/image placeholder="blur". If absent, consumers use a solid --crudo box. */
   placeholder?: string | null;
   /** Intrinsic px width — helps next/image avoid layout shift. Optional; 4:5 framing is enforced by CSS. */
-  width?: number;
+  width?: number | null;
   /** Intrinsic px height. Optional. */
-  height?: number;
+  height?: number | null;
 }
 
 /** ---- ColorContract (flat, descriptive; NOT a SKU matrix) ---- */
