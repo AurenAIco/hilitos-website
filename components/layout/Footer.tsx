@@ -22,7 +22,7 @@ export function Footer() {
           <nav aria-label="Pie de página" className="flex flex-col">
             {NAV_ITEMS.map((item) => (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 className="inline-flex min-h-11 w-fit items-center text-sm text-tinta hover:text-barro-hondo"
               >
