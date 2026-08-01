@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { WhatsAppCTA } from "./WhatsAppCTA";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
 export function Footer() {
   return (
@@ -22,7 +23,7 @@ export function Footer() {
           <nav aria-label="Pie de página" className="flex flex-col">
             {NAV_ITEMS.map((item) => (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 className="inline-flex min-h-11 w-fit items-center text-sm text-tinta hover:text-barro-hondo"
               >
@@ -39,7 +40,7 @@ export function Footer() {
 
           <div className="md:max-w-xs">
             <p className="mb-3 text-sm text-text-muted">¿Tienes preguntas? Escríbenos.</p>
-            <WhatsAppCTA />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
           </div>
         </div>
         <p className="mt-12 border-t border-hairline pt-6 text-xs text-text-muted">

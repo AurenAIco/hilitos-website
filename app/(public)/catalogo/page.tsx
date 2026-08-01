@@ -12,6 +12,7 @@ import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { DesignCard } from "@/components/product/DesignCard";
 import { FeaturedDesigns } from "@/components/product/FeaturedDesigns";
 import { CatalogStatusBanner } from "@/components/catalog/CatalogStatusBanner";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // NOTE: Next.js requires this route-segment-config export to be a static
 // literal (it is extracted without executing module code) — it cannot be an
@@ -23,6 +24,11 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Catálogo",
+  description:
+    "Explora el catálogo de Hilitos: ajuar artesanal tejido a mano para bebés, organizado por categoría, colores y tallas.",
+  alternates: {
+    canonical: `${resolveSiteUrl().origin}/catalogo`,
+  },
 };
 
 export default async function CatalogoPage() {

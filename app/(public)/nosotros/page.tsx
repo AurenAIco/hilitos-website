@@ -1,18 +1,33 @@
-// app/nosotros/page.tsx — Heritage page (AMARILLO, HILITOS-P1A-AMARILLO §6D).
-// Copy uses ONLY facts already published by the brand on the live site plus
-// clearly-marked placeholders. No founding dates, family names, "más de 40
-// años", or process claims are invented (§13).
+// app/nosotros/page.tsx — Heritage page (AMARILLO, HILITOS-P1A-AMARILLO §6D;
+// S4 Legal/About closure). Copy uses ONLY facts already published by the
+// brand on the live site. The former second-section brand-history pending
+// block is removed rather than filled: the only additional brand-history
+// copy available (legacy hilitos.co homepage "Nuestra Historia" section,
+// confirmed still live during S4 source review) is exactly the kind of
+// claim §13 already rules out — an unverified years-of-operation figure
+// that is internally inconsistent with the same source's machine-readable
+// business listing, plus an unnamed multi-generational ownership narrative.
+// No founding dates, owner names, years-of-operation figures, headcounts,
+// awards, or process claims are invented or ported (§13).
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
-import { PendingBlock } from "@/components/editorial/PendingBlock";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
+import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 export const metadata: Metadata = {
   title: "Nosotros",
+  // Reuses this page's own approved hero copy verbatim — no new claim
+  // invented for SEO purposes.
+  description:
+    "Hilitos es un taller de ajuar artesanal para bebés en Bucaramanga, Colombia. Cada ajuar es tejido a mano con fibras naturales seleccionadas para la piel más delicada.",
+  alternates: {
+    canonical: `${resolveSiteUrl().origin}/nosotros`,
+  },
 };
 
 export default function NosotrosPage() {
@@ -44,19 +59,6 @@ export default function NosotrosPage() {
         </div>
       </Section>
 
-      <Section labelledBy="historia-titulo" className="pt-0">
-        <div className="max-w-2xl">
-          <EditorialHeading as="h2" id="historia-titulo" className="text-3xl">
-            Cada prenda, una historia
-          </EditorialHeading>
-          <PendingBlock className="mt-5">
-            Historia de la marca: origen, años de oficio (p. ej. el marco
-            «más de 40 años»), tradición familiar y proceso del taller. No se
-            publica ninguna afirmación sin el copy aprobado.
-          </PendingBlock>
-        </div>
-      </Section>
-
       <Section bleed labelledBy="volver-titulo" className="bg-crudo/50">
         <div className="mx-auto flex w-full max-w-page flex-col items-center px-[var(--container-gutter)] text-center">
           <EditorialHeading as="h2" id="volver-titulo" className="text-2xl">
@@ -67,7 +69,7 @@ export default function NosotrosPage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button href="/catalogo">Ver el catálogo</Button>
-            <WhatsAppCTA />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
           </div>
         </div>
       </Section>

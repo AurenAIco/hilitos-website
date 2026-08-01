@@ -1,14 +1,15 @@
 // components/layout/WhatsAppCTA.tsx — AMARILLO. PRESENTATIONAL ONLY.
 // Renders the WhatsApp affordance with the RESERVED --whatsapp green.
-// Accepts an href; the default is a clearly-marked placeholder.
+// Accepts an already-built href from a caller (lib/whatsapp.ts, Verde-owned).
+// This component must NEVER build the message, embed or guess a phone
+// number, or read process.env — and it must NEVER ship a believable-but-fake
+// wa.me link (mission pack §6B). When no valid href is supplied (missing/
+// invalid WhatsApp configuration upstream), it renders a disabled,
+// non-interactive control instead of a clickable dead end (slice S6).
 //
-// TODO(verde): wire the real wa.me URL + prefilled message via lib/whatsapp.ts
-// (Verde-owned). This component must NEVER build the message, embed or guess
-// a phone number, or ship a believable-but-fake wa.me link (mission pack §6B).
-//
-// A11Y: label/icon use --tinta on --whatsapp (≈7.5:1). White-on-green fails AA.
-const PLACEHOLDER_HREF = "#whatsapp-pendiente";
-
+// A11Y: label/icon use --tinta on --whatsapp (≈7.5:1). White-on-green fails
+// AA. The disabled state is exempt from that contrast requirement (WCAG
+// 1.4.11 excludes inactive UI components) but keeps layout/size identical.
 function WhatsAppIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -24,28 +25,50 @@ function WhatsAppIcon({ className = "" }: { className?: string }) {
 }
 
 export function WhatsAppCTA({
-  href = PLACEHOLDER_HREF,
+  href,
   label = "Escríbenos por WhatsApp",
   compact = false,
   className = "",
 }: {
-  /** Real wa.me href — wired later by Verde. Defaults to a marked placeholder. */
-  href?: string;
+  /** Real wa.me href built by lib/whatsapp.ts. Omit (or pass null) when no
+   * WhatsApp number is configured — the CTA renders disabled instead of a
+   * fake link. This component never fabricates one on its own. */
+  href?: string | null;
   label?: string;
   /** Compact: icon-first pill for the header. */
   compact?: boolean;
   className?: string;
 }) {
-  return (
-    <a
-      href={href}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-whatsapp font-medium text-tinta transition-opacity duration-[var(--duration-base)] hover:opacity-85 ${
-        compact ? "px-4 text-sm" : "px-6 py-2 text-sm"
-      } ${className}`}
-    >
+  const sizeClassName = compact ? "px-4 text-sm" : "px-6 py-2 text-sm";
+  const sharedClassName = `inline-flex min-h-11 items-center justify-center gap-2 rounded-pill font-medium ${sizeClassName} ${className}`;
+
+  const content = (
+    <>
       <WhatsAppIcon />
       <span className={compact ? "hidden sm:inline" : ""}>{label}</span>
       {compact ? <span className="sr-only sm:hidden">{label}</span> : null}
+    </>
+  );
+
+  if (!href) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-label={`${label} (no disponible por el momento)`}
+        className={`${sharedClassName} cursor-not-allowed bg-whatsapp/35 text-tinta/60`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      className={`${sharedClassName} bg-whatsapp text-tinta transition-opacity duration-[var(--duration-base)] hover:opacity-85`}
+    >
+      {content}
     </a>
   );
 }

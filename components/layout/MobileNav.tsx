@@ -2,12 +2,29 @@
 // focus trap, Escape-to-close, focus restoration to the trigger, body scroll
 // lock, closes on navigation. Client component (the shell's only other
 // interactive piece besides Reveal).
+//
+// S5: the open overlay is rendered via a portal to document.body rather than
+// as a normal DOM child. Header (the trigger's ancestor) sets
+// `backdrop-blur-sm`, which — like `filter`/`transform` — establishes a CSS
+// containing block for `position: fixed` descendants (spec:
+// https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty). Left
+// in-tree, the drawer's `fixed inset-0` overlay would resolve against
+// Header's ~64px box instead of the viewport, shrinking the scrim and
+// letting background links stay clickable underneath it. Portaling to
+// document.body escapes that containing block while keeping the overlay
+// inside MobileNav's React tree (state, context, and event bubbling to
+// React ancestors are unaffected by the portal). Safe from hydration
+// mismatches because `open` starts false: the overlay branch never renders
+// during SSR or the initial client render, only after a later user-driven
+// state update, so `document.body` is never touched before mount.
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { WhatsAppCTA } from "./WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -97,54 +114,57 @@ export function MobileNav() {
         </svg>
       </button>
 
-      {open ? (
-        <div className="fixed inset-0 z-50">
-          <button
-            type="button"
-            aria-hidden="true"
-            tabIndex={-1}
-            onClick={close}
-            className="absolute inset-0 cursor-default bg-tinta/30"
-          />
-          <div
-            ref={panelRef}
-            id="menu-movil"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menú"
-            className="absolute right-0 top-0 flex h-full w-[min(20rem,85vw)] flex-col gap-2 border-l border-hairline bg-marfil p-6 shadow-lg motion-safe:animate-[amarillo-rise_var(--duration-base)_var(--ease-entrance)_both]"
-          >
-            <div className="mb-2 flex items-center justify-between">
-              <span className="font-display text-xl text-tinta">Hilitos</span>
+      {open
+        ? createPortal(
+            <div className="fixed inset-0 z-50 md:hidden">
               <button
                 type="button"
+                aria-hidden="true"
+                tabIndex={-1}
                 onClick={close}
-                aria-label="Cerrar menú"
-                className="grid size-11 place-items-center rounded-md text-tinta hover:bg-crudo/60"
+                className="absolute inset-0 cursor-default bg-tinta/30"
+              />
+              <div
+                ref={panelRef}
+                id="menu-movil"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menú"
+                className="absolute right-0 top-0 flex h-full w-[min(20rem,85vw)] flex-col gap-2 overflow-y-auto border-l border-hairline bg-marfil p-6 shadow-lg motion-safe:animate-[amarillo-rise_var(--duration-base)_var(--ease-entrance)_both]"
               >
-                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="size-6" fill="none">
-                  <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                </svg>
-              </button>
-            </div>
-            <nav aria-label="Principal (móvil)" className="flex flex-col">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={close}
-                  className="border-b border-hairline py-3.5 text-lg text-tinta hover:text-barro-hondo"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-4">
-              <WhatsAppCTA className="w-full" />
-            </div>
-          </div>
-        </div>
-      ) : null}
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="font-display text-xl text-tinta">Hilitos</span>
+                  <button
+                    type="button"
+                    onClick={close}
+                    aria-label="Cerrar menú"
+                    className="grid size-11 place-items-center rounded-md text-tinta hover:bg-crudo/60"
+                  >
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" className="size-6" fill="none">
+                      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
+                <nav aria-label="Principal (móvil)" className="flex flex-col">
+                  {NAV_ITEMS.map((item) => (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      onClick={close}
+                      className="border-b border-hairline py-3.5 text-lg text-tinta hover:text-barro-hondo"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+                <div className="mt-4">
+                  <WhatsAppCTA className="w-full" href={buildGenericWhatsAppHref()} />
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

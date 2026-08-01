@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { MobileNav } from "./MobileNav";
 import { WhatsAppCTA } from "./WhatsAppCTA";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
 export function Header() {
   return (
@@ -21,7 +22,7 @@ export function Header() {
         <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
               className="flex min-h-11 items-center text-sm text-tinta transition-colors duration-[var(--duration-fast)] hover:text-barro-hondo"
             >
@@ -35,7 +36,7 @@ export function Header() {
               classes to WhatsAppCTA (whose base `inline-flex` would otherwise
               win over `hidden` at mobile widths and leak the CTA). */}
           <span className="hidden md:inline-flex">
-            <WhatsAppCTA compact />
+            <WhatsAppCTA compact href={buildGenericWhatsAppHref()} />
           </span>
           <MobileNav />
         </div>
