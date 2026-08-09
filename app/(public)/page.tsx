@@ -268,7 +268,70 @@ export default async function HomePage() {
         </a>
       </Section>
 
-      {/* 8 · FAQ (published brand answers only) */}
+      {/* 8 · Información práctica — owner-confirmed business facts (Mónica,
+          via Juanpa, 2026-08-09). Address/hours/phone, accepted payment
+          methods, and shipping carrier are stated exactly as supplied — no
+          invented times, prices, SLAs, or "free/same-day shipping" claim.
+          Returns/exchanges uses Mónica's own restrained wording: it
+          deliberately does NOT say "no aceptamos devoluciones" (legal
+          consumer rights — garantía/retracto — can still apply), and this
+          wording should still get real legal review before launch; nothing
+          here was invented beyond what was supplied. */}
+      <Section labelledBy="info-practica-titulo" bleed className="bg-crudo/50">
+        <Container>
+          <EditorialHeading as="h2" id="info-practica-titulo" className="text-3xl">
+            Información práctica
+          </EditorialHeading>
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            <div className="rounded-lg border border-hairline bg-marfil p-6">
+              <h3 className="text-lg font-medium text-tinta">Visítanos</h3>
+              <p className="mt-2 text-sm leading-[var(--leading-relaxed)] text-text-muted">
+                Calle 113 #22-24, Piso 2
+                <br />
+                Bucaramanga, Colombia
+              </p>
+              <p className="mt-3 text-sm leading-[var(--leading-relaxed)] text-text-muted">
+                Lun – Vie: 9:30 a.&nbsp;m. – 12:00 m. y 3:00 p.&nbsp;m. – 5:00 p.&nbsp;m.
+                <br />
+                Sáb: 9:30 a.&nbsp;m. – 12:00 m.
+              </p>
+              <a
+                href="tel:+573016168730"
+                className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-barro-hondo hover:text-tinta"
+              >
+                301 616 8730
+              </a>
+            </div>
+            <div className="rounded-lg border border-hairline bg-marfil p-6">
+              <h3 className="text-lg font-medium text-tinta">Métodos de pago</h3>
+              <ul className="mt-2 space-y-1 text-sm leading-[var(--leading-relaxed)] text-text-muted">
+                <li>Transferencia Bancolombia</li>
+                <li>Bre-B</li>
+                <li>Nequi</li>
+                <li>Link de pago con tarjeta de crédito</li>
+                <li>Contra entrega</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border border-hairline bg-marfil p-6">
+              <h3 className="text-lg font-medium text-tinta">Envíos</h3>
+              <p className="mt-2 text-sm leading-[var(--leading-relaxed)] text-text-muted">
+                Envíos por Inter Rapidísimo.
+              </p>
+            </div>
+          </div>
+          <div className="mt-6 rounded-lg border border-hairline bg-marfil p-6">
+            <h3 className="text-lg font-medium text-tinta">Cambios y devoluciones</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-[var(--leading-relaxed)] text-text-muted">
+              Las condiciones aplicables dependen del tipo de producto y pedido. Los derechos
+              legales del consumidor, incluyendo garantía y retracto cuando correspondan, se
+              mantienen conforme a la normativa aplicable. Los productos personalizados pueden
+              estar sujetos a excepciones legales.
+            </p>
+          </div>
+        </Container>
+      </Section>
+
+      {/* 9 · FAQ (published brand answers only) */}
       <Section labelledBy="faq-titulo">
         <EditorialHeading as="h2" id="faq-titulo" className="text-3xl">
           Preguntas frecuentes
@@ -310,7 +373,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 9 · Final WhatsApp CTA */}
+      {/* 10 · Final WhatsApp CTA */}
       <Section bleed labelledBy="cta-final-titulo" className="bg-marfil">
         <Container className="flex flex-col items-center border-y border-hairline py-14 text-center">
           <ThreadMotif className="mb-6 max-w-64" />
