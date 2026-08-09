@@ -98,19 +98,29 @@ test('the collection page renders exactly one visible <h1> (via EditorialHeading
 
 // ---- nav destination fix ----------------------------------------------------
 
-test('NAV_ITEMS no longer points "Colecciones" (or anything) at the obsolete /colecciones/esenciales', () => {
+test('NAV_ITEMS no longer points anything at the obsolete /colecciones/esenciales', () => {
   for (const item of NAV_ITEMS) {
     assert.notEqual(item.href, "/colecciones/esenciales", `unexpected obsolete href on "${item.label}"`);
   }
 });
 
-test('NAV_ITEMS\' global "Colecciones" overview item points at /catalogo', () => {
-  const colecciones = NAV_ITEMS.find((item) => item.label === "Colecciones");
-  assert.ok(colecciones, 'expected a NAV_ITEMS entry labelled "Colecciones"');
-  assert.equal(colecciones?.href, "/catalogo");
+// Final pre-launch QA delta: the separate "Colecciones" overview item was
+// removed entirely — it duplicated "Catálogo"'s exact /catalogo
+// destination (two top-level nav items landing on the identical page reads
+// as a broken link, not a real second destination), and there is no
+// top-level /colecciones route for it to point at instead. This test now
+// pins that removal rather than the old item's destination.
+test('NAV_ITEMS has no separate top-level "Colecciones" item (removed — duplicated "Catálogo"\'s /catalogo destination, and no top-level /colecciones route exists)', () => {
+  const labels: readonly string[] = NAV_ITEMS.map((item) => item.label);
+  assert.equal(labels.includes("Colecciones"), false);
 });
 
-test("NAV_ITEMS entries have unique labels (safe as a React list key after the /catalogo dedup)", () => {
+test("NAV_ITEMS has no two items sharing the same destination (the exact defect the 'Colecciones' removal fixes)", () => {
+  const hrefs = NAV_ITEMS.map((item) => item.href);
+  assert.equal(new Set(hrefs).size, hrefs.length, `expected unique destinations, got: ${hrefs.join(", ")}`);
+});
+
+test("NAV_ITEMS entries have unique labels (safe as a React list key)", () => {
   const labels = NAV_ITEMS.map((item) => item.label);
   assert.equal(new Set(labels).size, labels.length, `expected unique labels, got: ${labels.join(", ")}`);
 });

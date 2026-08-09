@@ -143,7 +143,14 @@ export function VariantSelector({
                     }`}
                   >
                     <ColorSwatch color={color} />
-                    {color.name}
+                    {/* ColorSwatch renders the name as VISIBLE text itself when
+                        color.hex is absent (see components/ui/ColorSwatch.tsx's
+                        name-only-chip branch) — this trailing text is added only
+                        for the hex branch, where ColorSwatch is icon-only (dot +
+                        aria-label). Rendering it unconditionally previously
+                        produced a visible duplicate ("Beige Beige") for every
+                        no-hex colorway; each color must be named exactly once. */}
+                    {color.hex ? color.name : null}
                   </button>
                 </li>
               ))}
@@ -205,7 +212,13 @@ export function VariantSelector({
 
         {canShowCta ? (
           <div className="mt-6">
-            <WhatsAppCTA href={waHref ?? undefined} label="Confirmar por WhatsApp" />
+            <WhatsAppCTA
+              href={waHref ?? undefined}
+              label="Confirmar por WhatsApp"
+              analyticsSource="product_detail"
+              analyticsProductRef={design.designRef}
+              analyticsVariantRef={selectedVariant?.ref}
+            />
           </div>
         ) : null}
       </div>

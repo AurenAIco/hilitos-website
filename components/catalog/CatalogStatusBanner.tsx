@@ -52,7 +52,7 @@ export function CatalogStatusBanner({
         minutos, o escríbenos por WhatsApp y con gusto te ayudamos.
       </p>
       <div className="mt-4 flex justify-center">
-        <WhatsAppCTA href={href ?? undefined} label="Escríbenos por WhatsApp" />
+        <WhatsAppCTA href={href ?? undefined} label="Escríbenos por WhatsApp" analyticsSource="catalog_unavailable" />
       </div>
     </div>
   );

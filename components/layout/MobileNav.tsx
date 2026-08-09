@@ -158,7 +158,7 @@ export function MobileNav() {
                   ))}
                 </nav>
                 <div className="mt-4">
-                  <WhatsAppCTA className="w-full" href={buildGenericWhatsAppHref()} />
+                  <WhatsAppCTA className="w-full" href={buildGenericWhatsAppHref()} analyticsSource="mobile_nav" />
                 </div>
               </div>
             </div>,

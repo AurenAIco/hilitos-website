@@ -2,14 +2,25 @@
 // Renders the WhatsApp affordance with the RESERVED --whatsapp green.
 // Accepts an already-built href from a caller (lib/whatsapp.ts, Verde-owned).
 // This component must NEVER build the message, embed or guess a phone
-// number, or read process.env — and it must NEVER ship a believable-but-fake
-// wa.me link (mission pack §6B). When no valid href is supplied (missing/
-// invalid WhatsApp configuration upstream), it renders a disabled,
-// non-interactive control instead of a clickable dead end (slice S6).
+// number, or read process.env for WhatsApp configuration — and it must
+// NEVER ship a believable-but-fake wa.me link (mission pack §6B). When no
+// valid href is supplied (missing/invalid WhatsApp configuration upstream),
+// it renders a disabled, non-interactive control instead of a clickable dead
+// end (slice S6).
 //
 // A11Y: label/icon use --tinta on --whatsapp (≈7.5:1). White-on-green fails
 // AA. The disabled state is exempt from that contrast requirement (WCAG
 // 1.4.11 excludes inactive UI components) but keeps layout/size identical.
+//
+// "use client" (final pre-launch value slice, Slice E): the only reason this
+// is a Client Component is the optional analytics click ping below — a
+// non-PII, fail-closed event (lib/analytics.ts) fired on click, never
+// blocking or delaying the wa.me navigation. No message/number logic moved
+// here; that boundary is unchanged.
+"use client";
+
+import { track } from "@/lib/analytics";
+
 function WhatsAppIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -29,6 +40,9 @@ export function WhatsAppCTA({
   label = "Escríbenos por WhatsApp",
   compact = false,
   className = "",
+  analyticsSource,
+  analyticsProductRef,
+  analyticsVariantRef,
 }: {
   /** Real wa.me href built by lib/whatsapp.ts. Omit (or pass null) when no
    * WhatsApp number is configured — the CTA renders disabled instead of a
@@ -38,9 +52,33 @@ export function WhatsAppCTA({
   /** Compact: icon-first pill for the header. */
   compact?: boolean;
   className?: string;
+  /** Which surface this CTA renders on — one of the approved `source`
+   * values (e.g. "header", "product_detail", "catalog_unavailable") for
+   * the `whatsapp_click` analytics event. Omit to skip the click ping
+   * entirely. */
+  analyticsSource?: string;
+  /** Base storefront design ref (e.g. "4194"), when this CTA is scoped to
+   * one product — ALWAYS the base design ref, matching product_view's own
+   * product_ref, never a variant SKU (see lib/analytics.ts's event
+   * contract note on why the two must agree). */
+  analyticsProductRef?: string | null;
+  /** Specific selected variant's SKU ref (e.g. "4194-BEIGE-CELESTE-T6"),
+   * when one is resolved — carried separately from analyticsProductRef,
+   * never in place of it. */
+  analyticsVariantRef?: string;
 }) {
   const sizeClassName = compact ? "px-4 text-sm" : "px-6 py-2 text-sm";
   const sharedClassName = `inline-flex min-h-11 items-center justify-center gap-2 rounded-pill font-medium ${sizeClassName} ${className}`;
+
+  function handleClick() {
+    if (!analyticsSource) return;
+    track({
+      name: "whatsapp_click",
+      source: analyticsSource,
+      product_ref: analyticsProductRef ?? null,
+      ...(analyticsVariantRef ? { variant_ref: analyticsVariantRef } : {}),
+    });
+  }
 
   const content = (
     <>
@@ -66,6 +104,9 @@ export function WhatsAppCTA({
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={handleClick}
       className={`${sharedClassName} bg-whatsapp text-tinta transition-opacity duration-[var(--duration-base)] hover:opacity-85`}
     >
       {content}

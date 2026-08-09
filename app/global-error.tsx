@@ -23,7 +23,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
   return (
     <html lang="es-CO">
       <body className="bg-marfil text-tinta antialiased">
-        <main id="contenido" className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
+        <main id="contenido" tabIndex={-1} className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
           <p className="text-sm font-medium uppercase tracking-[var(--tracking-tight)] text-barro-hondo">
             Error inesperado
           </p>

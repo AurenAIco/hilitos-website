@@ -1,33 +1,46 @@
 // app/sitemap.ts — SKELETON created by Violeta/foundation; ongoing owner: VERDE.
-// S7A (SEO foundation) fixes the origin (lib/seo/siteUrl.ts) — no more
-// unconditional localhost fallback — and lists only finished, indexable
-// public routes. Note app/robots.ts stays fail-closed (Disallow: /) for
-// every origin except the real hilitos.co custom domain until Gate A6, so
-// this sitemap remains inert for real crawlers on any Vercel/local origin
-// in the meantime — see that file for the cutover contract.
+// S7A (SEO foundation) fixed the origin (lib/seo/siteUrl.ts) — no more
+// unconditional localhost fallback. Note app/robots.ts stays fail-closed
+// (Disallow: /) for every origin except the real hilitos.co custom domain
+// until Gate A6, so this sitemap remains inert for real crawlers on any
+// Vercel/local origin in the meantime — see that file for the cutover
+// contract.
 //
-// S7B EXTENSION POINT: add dynamic entries for /productos/[slug] and
-// /colecciones/[slug] here once Verde's catalog data layer (lib/catalog/**)
-// exposes an enumerable list of published slugs. Do NOT invent product or
-// collection URLs ahead of real, published catalog data — an unpublished or
-// wrong slug in a sitemap is worse than omitting it (crawlers penalize
-// sitemaps with dead links).
+// S7B EXTENSION POINT CLOSED (final pre-launch value pass): dynamic entries
+// for /productos/[slug] and every non-empty /colecciones/[slug] now come
+// from Verde's live catalog data layer (lib/catalog/storefront.ts) — the
+// same getStorefrontCatalog() every storefront route already calls, so a
+// slug can never appear here that isn't a real, currently-published design.
+// The actual entry-building is a pure function (lib/seo/sitemapEntries.ts)
+// so it's unit-testable without mocking fetch/env; this file is just the
+// thin async wrapper Next.js's file convention requires.
+//
+// FAIL-CLOSED GATE (cleanup-pass audit): dynamic entries are built ONLY on
+// status "ok" — a genuinely fresh, this-request fetch. "stale" is
+// deliberately treated the same as "unavailable" here, NOT the same as it
+// is on the human-facing catalog/product/collection pages. Those pages show
+// stale (real, previously-live) data WITH a visible CatalogStatusBanner
+// disclosing it; a sitemap is machine-read XML with no way to disclose
+// anything, and getStorefrontCatalog()'s in-process last-good cache is
+// unbounded — it can be arbitrarily old if the backend has been down for a
+// while, not just "up to one revalidate window" stale. On both "stale" and
+// "unavailable" this falls back to the four static routes rather than
+// throwing: a sitemap missing today's products is far better than either a
+// build failure or a crawlable URL sourced from data of unknown age, and
+// the next successful ("ok") revalidation fills it back in.
 import type { MetadataRoute } from "next";
+import { getStorefrontCatalog } from "@/lib/catalog/storefront";
+import { buildSitemapEntries } from "@/lib/seo/sitemapEntries";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
-// Finished, indexable, static public routes only. /catalogo is included:
-// its content is fetched live (lib/catalog/storefront.ts) but the ROUTE
-// itself is static and finished. Deliberately excludes every app/(admin)/**
-// route (never indexable — see app/(admin)/layout.tsx's own noindex
-// metadata) and every dynamic [slug] route (no enumerable published data
-// source wired up yet — S7B).
-const STATIC_PUBLIC_ROUTES = ["/", "/catalogo", "/nosotros", "/privacy"];
+// Kept numerically identical to lib/catalog/storefront.ts's
+// CATALOG_REVALIDATE_SECONDS (also used by app/(public)/catalogo/page.tsx
+// and the other catalog-backed routes) — if you change one, change both.
+export const revalidate = 300;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { origin } = resolveSiteUrl();
-  return STATIC_PUBLIC_ROUTES.map((route) => ({
-    url: route === "/" ? origin : `${origin}${route}`,
-    changeFrequency: "weekly",
-    priority: route === "/" ? 1 : 0.7,
-  }));
+  const result = await getStorefrontCatalog();
+  const freshCatalog = result.status === "ok" ? result.catalog : null;
+  return buildSitemapEntries(origin, freshCatalog);
 }

@@ -180,6 +180,24 @@ export function getFeaturedDesigns(catalog: StorefrontCatalogV2): StorefrontDesi
     .sort((a, b) => (a.featuredRank ?? 0) - (b.featuredRank ?? 0));
 }
 
+/** Related-designs rail for /productos/[slug] (Slice C, final pre-launch
+ * value pass): same category, excludes the current design, deterministic
+ * (catalog emission order — never random, never AI-recommended), capped at
+ * `limit`. Includes sold_out designs (DesignCard already renders an honest
+ * "Agotado" badge for those, same as /catalogo) — excluding them would make
+ * the rail non-deterministic in size for categories with few available
+ * designs, and hiding a real published design here would be its own kind of
+ * dishonesty this codebase otherwise avoids. */
+export function getRelatedDesigns(
+  catalog: StorefrontCatalogV2,
+  current: Pick<StorefrontDesign, "designRef" | "category">,
+  limit = 4,
+): StorefrontDesign[] {
+  return catalog.designs
+    .filter((d) => d.category === current.category && d.designRef !== current.designRef)
+    .slice(0, limit);
+}
+
 /** Group designs by the frozen category order in the envelope's own
  * `categories[]` list (never a locally-invented order). Empty categories are
  * omitted by callers, not here — this just projects the grouping. */
