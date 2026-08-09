@@ -9,8 +9,11 @@
 // never a real price/reference/availability the visitor could believe is
 // current when it is not.
 // Copy uses only facts already published by the brand on the live site
-// (hilitos.co). The named traps ("más de 500 familias", testimonials) are
-// deliberately NOT carried over even though the legacy site shows them.
+// (hilitos.co). The named trap ("más de 500 familias" and the legacy site's
+// invented names/cities/star ratings) is deliberately NOT carried over. A
+// testimonios section (§7) DOES exist below, but only as an explicitly
+// labelled PLACEHOLDER (no invented name, city, rating, or count) pending
+// real client content — see the comment at that section for detail.
 //
 // Why "stale" is excluded rather than disclosed here: getStorefrontCatalog()'s
 // fallback contract requires every caller that renders "stale" data to show a
@@ -26,6 +29,7 @@ import { getFeaturedDesigns, getStorefrontCatalog } from "@/lib/catalog/storefro
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
 import { FeaturedDesigns } from "@/components/product/FeaturedDesigns";
@@ -210,7 +214,61 @@ export default async function HomePage() {
         </Container>
       </Section>
 
-      {/* 7 · FAQ (published brand answers only) */}
+      {/* 7 · Testimonios — PLACEHOLDER content pending real client
+          testimonials (Mónica review). Cards are visibly marked "CAMBIAR"
+          and carry no name, city, rating, or count that isn't real — same
+          no-fabricated-claims rule as the rest of this page (see file
+          header and §6 above). Swap only the `quote`/`name` fields below
+          once real testimonials are approved; the section/card structure
+          does not need to change. */}
+      <Section labelledBy="testimonios-titulo">
+        <EditorialHeading as="h2" id="testimonios-titulo" className="text-3xl">
+          Lo que dicen nuestras familias
+        </EditorialHeading>
+        <p className="mt-3 max-w-2xl text-sm leading-[var(--leading-relaxed)] text-text-muted">
+          Contenido de muestra mientras preparamos testimonios reales.
+        </p>
+        <ul className="mt-8 grid gap-6 md:grid-cols-3">
+          {[
+            { quote: "CAMBIAR — Testimonio real de cliente 1", name: "CAMBIAR — Nombre cliente 1" },
+            { quote: "CAMBIAR — Testimonio real de cliente 2", name: "CAMBIAR — Nombre cliente 2" },
+            { quote: "CAMBIAR — Testimonio real de cliente 3", name: "CAMBIAR — Nombre cliente 3" },
+          ].map((testimonial, i) => (
+            <li key={testimonial.name}>
+              <Reveal delayMs={i * 90}>
+                <figure className="flex h-full flex-col rounded-lg border border-dashed border-hairline bg-marfil p-6">
+                  <span className="mb-3 inline-flex w-fit items-center rounded-pill bg-crudo px-3 py-1 text-xs font-medium text-barro-hondo">
+                    Ejemplo
+                  </span>
+                  <blockquote className="flex-1 font-display text-lg italic leading-[var(--leading-relaxed)] text-tinta">
+                    “{testimonial.quote}”
+                  </blockquote>
+                  <figcaption className="mt-4 border-t border-hairline pt-3 text-sm font-medium text-text-muted">
+                    {testimonial.name}
+                  </figcaption>
+                </figure>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+        {/* Instagram — one homepage trust placement (Footer already carries
+            the primary link; see components/layout/Footer.tsx). Plain
+            outbound link only: no feed embed, no API, no iframe, no
+            tracking pixel. */}
+        <a
+          href="https://www.instagram.com/hilitosoficial/"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-barro-hondo hover:text-tinta"
+        >
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" className="size-5 shrink-0">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+          </svg>
+          Síguenos en Instagram — @hilitosoficial
+        </a>
+      </Section>
+
+      {/* 8 · FAQ (published brand answers only) */}
       <Section labelledBy="faq-titulo">
         <EditorialHeading as="h2" id="faq-titulo" className="text-3xl">
           Preguntas frecuentes
@@ -252,7 +310,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 8 · Final WhatsApp CTA */}
+      {/* 9 · Final WhatsApp CTA */}
       <Section bleed labelledBy="cta-final-titulo" className="bg-marfil">
         <Container className="flex flex-col items-center border-y border-hairline py-14 text-center">
           <ThreadMotif className="mb-6 max-w-64" />
