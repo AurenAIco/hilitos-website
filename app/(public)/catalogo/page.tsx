@@ -12,6 +12,7 @@ import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { DesignCard } from "@/components/product/DesignCard";
 import { FeaturedDesigns } from "@/components/product/FeaturedDesigns";
 import { CatalogStatusBanner } from "@/components/catalog/CatalogStatusBanner";
+import { ViewTracker } from "@/components/analytics/ViewTracker";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // NOTE: Next.js requires this route-segment-config export to be a static
@@ -36,7 +37,7 @@ export default async function CatalogoPage() {
 
   if (result.status === "unavailable" || !result.catalog) {
     return (
-      <main id="contenido">
+      <main id="contenido" tabIndex={-1}>
         <Section labelledBy="catalogo-titulo" className="pt-10 md:pt-14">
           <EditorialHeading as="h1" id="catalogo-titulo" className="text-display">
             Catálogo
@@ -54,7 +55,8 @@ export default async function CatalogoPage() {
   const grouped = groupDesignsByCategory(catalog).filter((g) => g.designs.length > 0);
 
   return (
-    <main id="contenido">
+    <main id="contenido" tabIndex={-1}>
+      <ViewTracker event={{ name: "catalog_view", collection_ref: null }} />
       <Section labelledBy="catalogo-titulo" className="pt-10 md:pt-14">
         <EditorialHeading as="h1" id="catalogo-titulo" className="text-display">
           Catálogo

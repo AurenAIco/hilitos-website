@@ -27,7 +27,7 @@ export default function NotFound() {
     <>
       <SkipLink />
       <Header />
-      <main id="contenido">
+      <main id="contenido" tabIndex={-1}>
         <Container className="flex flex-col items-center gap-6 py-20 text-center md:py-28">
           <ThreadMotif className="max-w-xs opacity-70" />
           <p className="text-sm font-medium uppercase tracking-[var(--tracking-tight)] text-barro-hondo">

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function NosotrosPage() {
   return (
-    <main id="contenido">
+    <main id="contenido" tabIndex={-1}>
       <Section labelledBy="nosotros-titulo" className="pt-10 md:pt-14">
         <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
           <div className="min-w-0 max-w-xl">
@@ -69,7 +69,7 @@ export default function NosotrosPage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button href="/catalogo">Ver el catálogo</Button>
-            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} analyticsSource="nosotros" />
           </div>
         </div>
       </Section>

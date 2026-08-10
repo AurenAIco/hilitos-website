@@ -60,7 +60,7 @@ export default async function HomePage() {
       : [];
 
   return (
-    <main id="contenido">
+    <main id="contenido" tabIndex={-1}>
       {/* 1 · Editorial hero */}
       <Section labelledBy="hero-titulo" className="pt-10 md:pt-14">
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
@@ -75,7 +75,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button href="/catalogo">Ver el catálogo</Button>
-              <WhatsAppCTA href={buildGenericWhatsAppHref()} />
+              <WhatsAppCTA href={buildGenericWhatsAppHref()} analyticsSource="home_hero" />
             </div>
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
@@ -263,7 +263,7 @@ export default async function HomePage() {
             Cuéntanos qué necesitas y te ayudamos a elegir la prenda ideal.
           </p>
           <div className="mt-7">
-            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} analyticsSource="home_final_cta" />
           </div>
         </Container>
       </Section>

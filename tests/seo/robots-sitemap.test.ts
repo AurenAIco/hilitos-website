@@ -278,7 +278,7 @@ test("the VERCEL_ENV guard takes precedence over NEXT_PUBLIC_SITE_URL, not the o
 
 // ── sitemap under a canonical-configured preview ─────────────────────────────
 
-test("sitemap() on a canonical-configured preview is inert because robots disallows everything (documents the residual)", () => {
+test("sitemap() on a canonical-configured preview is inert because robots disallows everything (documents the residual)", async () => {
   const env = {
     VERCEL: "1",
     VERCEL_ENV: "preview",
@@ -291,7 +291,7 @@ test("sitemap() on a canonical-configured preview is inert because robots disall
   // here is reachable by a compliant crawler.
   const { result } = robotsIn(env);
   assert.equal(result.sitemap, undefined, "preview must not advertise a sitemap");
-  const entries = withSeoEnv(env, () => sitemap());
+  const entries = await withSeoEnv(env, () => sitemap());
   for (const entry of entries) {
     assert.equal(entry.url.includes("localhost"), false);
   }
@@ -299,15 +299,15 @@ test("sitemap() on a canonical-configured preview is inert because robots disall
 
 // ── sitemap: no admin route, no localhost in production-like config ────────
 
-test("sitemap() contains no /admin route", () => {
-  const entries = withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
+test("sitemap() contains no /admin route", async () => {
+  const entries = await withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
   for (const entry of entries) {
     assert.equal(entry.url.includes("/admin"), false, `sitemap entry must not reference /admin: ${entry.url}`);
   }
 });
 
-test("sitemap() contains no localhost URL when NEXT_PUBLIC_SITE_URL is configured (production-like)", () => {
-  const entries = withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
+test("sitemap() contains no localhost URL when NEXT_PUBLIC_SITE_URL is configured (production-like)", async () => {
+  const entries = await withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
   assert.ok(entries.length > 0);
   for (const entry of entries) {
     assert.equal(entry.url.startsWith("https://hilitos.co"), true, `unexpected origin in sitemap entry: ${entry.url}`);
@@ -315,8 +315,8 @@ test("sitemap() contains no localhost URL when NEXT_PUBLIC_SITE_URL is configure
   }
 });
 
-test("sitemap() contains no localhost URL on a Vercel deployment either", () => {
-  const entries = withSeoEnv(
+test("sitemap() contains no localhost URL on a Vercel deployment either", async () => {
+  const entries = await withSeoEnv(
     { VERCEL: "1", VERCEL_ENV: "preview", VERCEL_URL: "hilitos-website-git-x.vercel.app" },
     () => sitemap(),
   );
@@ -326,15 +326,23 @@ test("sitemap() contains no localhost URL on a Vercel deployment either", () => 
   }
 });
 
-test("sitemap() only lists localhost URLs in the explicit local-development fallback", () => {
-  const entries = withSeoEnv({}, () => sitemap());
+test("sitemap() only lists localhost URLs in the explicit local-development fallback", async () => {
+  const entries = await withSeoEnv({}, () => sitemap());
   for (const entry of entries) {
     assert.equal(entry.url.startsWith("http://localhost:3000"), true);
   }
 });
 
-test("sitemap() never invents a /productos or /colecciones detail URL", () => {
-  const entries = withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
+// STOREFRONT_BACKEND_URL is unset for this whole test process, so
+// getStorefrontCatalog() fails closed to "unavailable" (catalog: null) —
+// see lib/catalog/storefront.ts's fallback contract — and sitemap() falls
+// back to the four static routes. This test documents THAT fail-closed
+// floor, not a blanket "sitemap.ts can never emit a product URL" rule — the
+// S7B extension point is now intentionally closed; see
+// tests/seo/sitemap-entries.test.ts for behavioral proof of the dynamic
+// /productos and /colecciones entries against a real (fixture) catalog.
+test("sitemap() never invents a /productos or /colecciones detail URL when no live catalog is reachable", async () => {
+  const entries = await withSeoEnv({ NEXT_PUBLIC_SITE_URL: "https://hilitos.co" }, () => sitemap());
   for (const entry of entries) {
     assert.equal(/\/productos\/.+/.test(entry.url), false, `sitemap must not invent a product URL: ${entry.url}`);
     assert.equal(/\/colecciones\/.+/.test(entry.url), false, `sitemap must not invent a collection URL: ${entry.url}`);

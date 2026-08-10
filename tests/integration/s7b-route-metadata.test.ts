@@ -198,12 +198,20 @@ test("no S7B route introduces an openGraph.images entry (no approved OG asset ex
   }
 });
 
-// ---- sitemap unchanged: still no product/collection URL enumeration --------
+// ---- sitemap: S7B residual closed (final pre-launch value pass) ------------
+// The S7B "not fixed in S7A" note this file used to pin ("sitemap.ts still
+// lists only the four finished static routes") described a deliberate,
+// documented gap — not a permanent constraint — pending an enumerable
+// published-slug source. lib/catalog/storefront.ts's getStorefrontCatalog()
+// is that source now, so app/sitemap.ts delegates entry-building to the pure
+// lib/seo/sitemapEntries.ts (see tests/seo/sitemap-entries.test.ts for
+// behavioral proof it only ever emits slugs sourced from a real catalog,
+// never invented ones, and tests/seo/robots-sitemap.test.ts for the
+// unavailable/no-backend fail-closed floor). This file just pins the wiring.
 
-test("app/sitemap.ts still lists only the four finished static routes — S7B did not add slug enumeration", () => {
+test("app/sitemap.ts delegates entry-building to lib/seo/sitemapEntries's buildSitemapEntries (no reimplemented static-route list)", () => {
   const src = readFileSync(join(ROOT, "app", "sitemap.ts"), "utf8");
-  assert.match(src, /const STATIC_PUBLIC_ROUTES = \["\/", "\/catalogo", "\/nosotros", "\/privacy"\]/);
-  for (const forbidden of ["/productos/", "/colecciones/"]) {
-    assert.equal(src.includes(`"${forbidden}`), false, `sitemap.ts must not enumerate "${forbidden}*" routes yet`);
-  }
+  assert.equal(src.includes("buildSitemapEntries"), true);
+  assert.equal(src.includes("@/lib/seo/sitemapEntries"), true);
+  assert.equal(src.includes("getStorefrontCatalog"), true, "sitemap.ts must source dynamic entries from the live catalog, not a hardcoded list");
 });

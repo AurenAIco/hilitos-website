@@ -11,9 +11,16 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-marfil/92 backdrop-blur-sm">
       <div className="mx-auto flex h-16 w-full max-w-page items-center justify-between gap-4 px-[var(--container-gutter)]">
+        {/* Final pre-launch QA delta: the wordmark's own text-2xl line box
+            measured ~24-30px tall on mobile — below the 44px accessible
+            touch-target minimum every other interactive element in this
+            header already meets (nav links, WhatsApp CTA, MobileNav
+            trigger all use min-h-11). flex + min-h-11 grows only the
+            LINK'S interactive box, vertically centering the unchanged
+            text-2xl wordmark inside it — no visual size change. */}
         <Link
           href="/"
-          className="font-display text-2xl font-semibold leading-none tracking-[var(--tracking-tight)] text-tinta"
+          className="flex min-h-11 items-center font-display text-2xl font-semibold leading-none tracking-[var(--tracking-tight)] text-tinta"
           aria-label="Hilitos — inicio"
         >
           Hilitos
@@ -36,7 +43,7 @@ export function Header() {
               classes to WhatsAppCTA (whose base `inline-flex` would otherwise
               win over `hidden` at mobile widths and leak the CTA). */}
           <span className="hidden md:inline-flex">
-            <WhatsAppCTA compact href={buildGenericWhatsAppHref()} />
+            <WhatsAppCTA compact href={buildGenericWhatsAppHref()} analyticsSource="header" />
           </span>
           <MobileNav />
         </div>

@@ -1,6 +1,22 @@
 // components/layout/Footer.tsx — AMARILLO. Shared public footer. Copy uses
 // only facts already published by the brand on the live site (hilitos.co):
 // "Ajuar artesanal para bebés · Bucaramanga, Colombia".
+//
+// Instagram link (Slice D, final pre-launch value pass): @hilitosoficial is
+// the handle directly observed live on hilitos.co today — classified
+// SAFE_EXISTING_CANONICAL (see the mission's final report), unlike the
+// address/hours/shipping/payment/returns/testimonial/heritage claims on
+// that same page, which are NOT migrated here pending owner confirmation.
+// A stale social handle is a low-severity, easily-corrected risk (a dead
+// link), not a business-fact error like a wrong address or return policy.
+//
+// URL is the canonical profile origin+path (trailing slash — Instagram's
+// own real canonical form), no query string: this repo's own canonical-URL
+// convention (lib/seo/siteUrl.ts's resolveSiteUrl — origin/path only, no
+// query/fragment) is deliberately mirrored here rather than embedding a
+// transient personalization param (e.g. "?hl=en", a language override) as
+// if it were part of the account's identity. Plain link, no embed, no
+// Instagram API/SDK, no tracking pixel.
 import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { WhatsAppCTA } from "./WhatsAppCTA";
@@ -18,6 +34,14 @@ export function Footer() {
             <p className="mt-2 text-sm leading-[var(--leading-relaxed)] text-text-muted">
               Ajuar artesanal para bebés · Bucaramanga, Colombia
             </p>
+            <a
+              href="https://www.instagram.com/hilitosoficial/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-3 inline-flex min-h-11 w-fit items-center text-sm text-tinta hover:text-barro-hondo"
+            >
+              @hilitosoficial en Instagram
+            </a>
           </div>
 
           <nav aria-label="Pie de página" className="flex flex-col">
@@ -40,7 +64,7 @@ export function Footer() {
 
           <div className="md:max-w-xs">
             <p className="mb-3 text-sm text-text-muted">¿Tienes preguntas? Escríbenos.</p>
-            <WhatsAppCTA href={buildGenericWhatsAppHref()} />
+            <WhatsAppCTA href={buildGenericWhatsAppHref()} analyticsSource="footer" />
           </div>
         </div>
         <p className="mt-12 border-t border-hairline pt-6 text-xs text-text-muted">

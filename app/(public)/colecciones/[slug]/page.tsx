@@ -15,6 +15,7 @@ import { Section } from "@/components/ui/Section";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { DesignCard } from "@/components/product/DesignCard";
 import { CatalogStatusBanner } from "@/components/catalog/CatalogStatusBanner";
+import { ViewTracker } from "@/components/analytics/ViewTracker";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
 // See app/(public)/catalogo/page.tsx's identical note: this must be a static
@@ -56,7 +57,7 @@ export default async function ColeccionPage({ params }: Params) {
 
   if (view.kind === "unavailable") {
     return (
-      <main id="contenido">
+      <main id="contenido" tabIndex={-1}>
         <Section labelledBy="coleccion-titulo" className="pt-10 md:pt-14">
           <EditorialHeading as="h1" id="coleccion-titulo" className="text-display">
             {meta.title}
@@ -73,7 +74,8 @@ export default async function ColeccionPage({ params }: Params) {
   const { designs, stale, fetchedAt } = view;
 
   return (
-    <main id="contenido">
+    <main id="contenido" tabIndex={-1}>
+      <ViewTracker event={{ name: "catalog_view", collection_ref: slug }} />
       <Section labelledBy="coleccion-titulo" className="pt-10 md:pt-14">
         <EditorialHeading as="h1" id="coleccion-titulo" className="text-display">
           {meta.title}
