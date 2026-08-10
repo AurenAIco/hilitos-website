@@ -36,6 +36,8 @@
   --color-hilo: var(--hilo);
   --color-sage: var(--sage);
   --color-whatsapp: var(--whatsapp); /* RESERVED: WhatsApp actions only */
+  --color-rosa-boton: var(--rosa-boton); /* brand-refresh primary button fill */
+  --color-rosa-boton-hover: var(--rosa-boton-hover);
 
   /* colors — functional aliases */
   --color-surface: var(--surface);

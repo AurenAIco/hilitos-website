@@ -21,6 +21,7 @@ import Link from "next/link";
 import { NAV_ITEMS } from "./nav-items";
 import { WhatsAppCTA } from "./WhatsAppCTA";
 import { ThreadMotif } from "@/components/editorial/ThreadMotif";
+import { MascotSlot } from "@/components/editorial/MascotSlot";
 import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
 export function Footer() {
@@ -30,9 +31,13 @@ export function Footer() {
         <ThreadMotif className="mb-10 opacity-70" />
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="max-w-xs">
-            <p className="font-display text-2xl text-tinta">Hilitos</p>
+            {/* Secondary "Hilitos by MM" mascot — subtle footer brand detail
+                only; renders nothing until the approved asset lands (see
+                MascotSlot). The Cormorant wordmark stays the primary mark. */}
+            <MascotSlot className="mb-3" />
+            <p className="font-display text-2xl font-semibold text-tinta">Hilitos</p>
             <p className="mt-2 text-sm leading-[var(--leading-relaxed)] text-text-muted">
-              Ajuar artesanal para bebés · Bucaramanga, Colombia
+              Ropita que cuida con amor · Bucaramanga, Colombia
             </p>
             <a
               href="https://www.instagram.com/hilitosoficial/"

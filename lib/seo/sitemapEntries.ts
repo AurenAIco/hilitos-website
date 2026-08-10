@@ -11,9 +11,10 @@ import type { StorefrontCatalogV2 } from "@/lib/contract";
 
 // Finished, indexable, static public routes. /catalogo is included: its
 // content is fetched live but the ROUTE itself is static and finished.
-// Deliberately excludes every app/(admin)/** route (never indexable — see
-// app/(admin)/layout.tsx's own noindex metadata).
-export const STATIC_PUBLIC_ROUTES = ["/", "/catalogo", "/nosotros", "/privacy"];
+// /personalizados joined in the 2026-08 brand refresh (frontend-only
+// editorial route). Deliberately excludes every app/(admin)/** route (never
+// indexable — see app/(admin)/layout.tsx's own noindex metadata).
+export const STATIC_PUBLIC_ROUTES = ["/", "/catalogo", "/personalizados", "/nosotros", "/privacy"];
 
 /**
  * Build the full sitemap: the four static routes, plus — only when a live

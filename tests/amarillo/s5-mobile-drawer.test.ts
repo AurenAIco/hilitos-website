@@ -97,7 +97,11 @@ test("clicking the scrim (outside the panel) closes the drawer", () => {
 });
 
 test("crossing the desktop breakpoint while open auto-closes the drawer", () => {
-  assert.match(mobileNavSrc, /matchMedia\("\(min-width: 768px\)"\)/);
+  // 2026-08 brand refresh: the desktop nav moved from md (768px) to lg
+  // (1024px) because the five-item nav no longer fits a 768px header row;
+  // the drawer's auto-close breakpoint moved with it (same behavior, new
+  // threshold — must always match the Header/MobileNav lg: classes).
+  assert.match(mobileNavSrc, /matchMedia\("\(min-width: 1024px\)"\)/);
   assert.match(mobileNavSrc, /if \(event\.matches\) close\(\)/);
 });
 

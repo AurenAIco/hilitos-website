@@ -11,9 +11,11 @@ const BASE =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-pill px-6 py-2 text-sm font-medium transition-colors duration-[var(--duration-base)] ease-[var(--ease-standard)]";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-barro-hondo text-marfil hover:bg-tinta",
+  // Primary fill/hover are the approved 2026-08 brand-refresh values
+  // (--rosa-boton / --rosa-boton-hover): dusty-pink fill, white label.
+  primary: "bg-rosa-boton text-white hover:bg-rosa-boton-hover",
   secondary:
-    "border border-barro-hondo bg-transparent text-barro-hondo hover:bg-crudo/60",
+    "border border-barro bg-transparent text-barro-hondo hover:bg-crudo/60",
   ghost: "bg-transparent text-barro-hondo hover:bg-crudo/50",
 };
 

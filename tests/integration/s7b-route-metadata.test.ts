@@ -87,9 +87,11 @@ test("/catalogo has a meaningful Spanish title and description, plus a canonical
 // ---- /nosotros -------------------------------------------------------------
 
 test("/nosotros has a meaningful Spanish title and description, plus a canonical URL", () => {
+  // 2026-08 brand refresh: the page became "Nuestra historia" (same /nosotros
+  // canonical URL) and its description is the owner-approved opening copy.
   const { metadata } = nosotrosMod;
-  assert.equal(titleText(metadata!.title), "Nosotros");
-  assert.match(metadata!.description as string, /Bucaramanga/);
+  assert.equal(titleText(metadata!.title), "Nuestra historia");
+  assert.match(metadata!.description as string, /santandereana/);
   assert.equal((metadata!.alternates as { canonical?: string })?.canonical, `${CANONICAL_ORIGIN}/nosotros`);
 });
 
