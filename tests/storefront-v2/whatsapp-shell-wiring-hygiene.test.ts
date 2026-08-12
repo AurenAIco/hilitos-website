@@ -132,10 +132,17 @@ for (const { label, path } of SHELL_CALLERS) {
   });
 }
 
-test("the homepage wires both CTA locations (hero and final band), not just one", () => {
+test("the homepage wires every WhatsApp surface through the canonical builder (hero CTA + FAQ/contact section props)", () => {
+  // 2026-08 brand refresh: the old second "final band" CTA was replaced by
+  // the FAQ and Contacto sections (components/home), which render their own
+  // <WhatsAppCTA/> from a `whatsappHref` prop. The invariant is unchanged —
+  // every WhatsApp href on the homepage is built by buildGenericWhatsAppHref()
+  // in page.tsx, never hardcoded — only the number of direct call sites moved.
   const src = readSrc(...["app", "(public)", "page.tsx"]);
   const tags = src.match(/<WhatsAppCTA\b[^>]*\/>/g) ?? [];
-  assert.equal(tags.length, 2, `expected exactly 2 WhatsAppCTA call sites on the homepage, got ${tags.length}`);
+  assert.equal(tags.length, 1, `expected exactly 1 direct WhatsAppCTA call site on the homepage (hero), got ${tags.length}`);
+  assert.match(src, /<FaqSection whatsappHref=\{buildGenericWhatsAppHref\(\)\}/);
+  assert.match(src, /<ContactSection whatsappHref=\{buildGenericWhatsAppHref\(\)\}/);
 });
 
 // ---- no shell caller silently omits the canonical href, anywhere -----------

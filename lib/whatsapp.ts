@@ -51,3 +51,10 @@ export function buildVariantWhatsAppHref(
 export function buildGenericWhatsAppHref(): string | null {
   return waMeHref("Hola, quisiera más información sobre el catálogo de Hilitos.");
 }
+
+/** Personalizados interest link (2026-08 brand refresh) — same fail-closed
+ * contract as every builder above: null when no business number is
+ * configured, never a fabricated link. */
+export function buildPersonalizadosWhatsAppHref(): string | null {
+  return waMeHref("Hola, quiero personalizar una prenda de Hilitos con el nombre de mi bebé.");
+}

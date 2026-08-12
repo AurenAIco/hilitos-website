@@ -332,7 +332,11 @@ test("HTTP smoke: both 404 routes against the real production build", async (t) 
       const ordinary = await get("/privacy"); // ordinary (public) page
       const copies = (body: string, marker: string) => body.split(marker).length - 1;
 
-      for (const marker of ["Saltar al contenido", "Pie de página", "Ajuar artesanal para bebés"]) {
+      // Third marker: a footer-only string. The old "Ajuar artesanal para
+      // bebés" tagline was replaced in the 2026-08 brand refresh, and its
+      // successor ("Ropita que cuida con amor") also appears in metadata
+      // titles — so the footer's WhatsApp prompt line is the unique marker.
+      for (const marker of ["Saltar al contenido", "Pie de página", "¿Tienes preguntas? Escríbenos."]) {
         const inG = copies(inGroup.body, marker);
         const outG = copies(outOfGroup.body, marker);
         const ord = copies(ordinary.body, marker);

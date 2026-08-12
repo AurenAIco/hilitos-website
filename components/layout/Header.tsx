@@ -26,7 +26,10 @@ export function Header() {
           Hilitos
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
+        {/* Desktop nav sits at lg (not md): the 2026-08 five-item nav
+            (Inicio | Catálogo | Personalizados | Nuestra historia | Contacto)
+            plus wordmark and WhatsApp CTA does not fit a 768px row. */}
+        <nav aria-label="Principal" className="hidden items-center gap-6 lg:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.label}
@@ -42,7 +45,7 @@ export function Header() {
           {/* Visibility is controlled by this wrapper, NOT by passing display
               classes to WhatsAppCTA (whose base `inline-flex` would otherwise
               win over `hidden` at mobile widths and leak the CTA). */}
-          <span className="hidden md:inline-flex">
+          <span className="hidden lg:inline-flex">
             <WhatsAppCTA compact href={buildGenericWhatsAppHref()} analyticsSource="header" />
           </span>
           <MobileNav />

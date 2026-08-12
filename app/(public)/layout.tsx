@@ -15,16 +15,20 @@ import "@/styles/amarillo.css";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
+import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 
-// STOREFRONT METADATA (moved verbatim from the P1A root layout — §7.6 of the
-// P1A pack): neutral, non-fabricating; copy pending Mónica approval; do NOT
-// add business claims (no founding year, no counts, no testimonials).
+// STOREFRONT METADATA — 2026-08 brand refresh. Default title and description
+// use ONLY the copy approved by Mónica/Juanpa for the redesign ("Hilitos —
+// Ropita que cuida con amor" + the approved hero body facts). No invented
+// claims (no founding year, no counts, no testimonials in metadata).
 export const metadata: Metadata = {
   title: {
-    default: "Hilitos",
+    default: "Hilitos — Ropita que cuida con amor",
     template: "%s · Hilitos",
   },
-  description: "Catálogo en línea de Hilitos.", // TODO(Mónica): approved copy pending — keep neutral.
+  description:
+    "Ropita artesanal para recién nacidos y bebés de 0, 3 y 6 meses. Hecha en Santander con 100% algodón.",
   openGraph: {
     siteName: "Hilitos",
     locale: "es_CO",
@@ -46,6 +50,10 @@ export default function PublicLayout({
       <Header />
       {children}
       <Footer />
+      {/* 2026-08 brand refresh: discreet floating WhatsApp entry point on
+          every public route. Href built here (Server Component) by the
+          Verde-owned builder; renders nothing when unconfigured. */}
+      <FloatingWhatsApp href={buildGenericWhatsAppHref()} />
     </>
   );
 }

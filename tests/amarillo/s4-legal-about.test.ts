@@ -106,21 +106,32 @@ test("privacy page carries forward the source's core commitments: no sale/share 
   assert.match(privacySrc, /WhatsApp/);
 });
 
-// ---- nosotros page: no invented history/founding claims ---------------------
+// ---- nosotros page: only the owner-approved history ------------------------
+//
+// 2026-08 brand refresh: Mónica/Juanpa supplied the approved "Nuestra
+// historia" copy verbatim — including the "más de 30 años" figure and the
+// Ximena/Mónica generational narrative that S4 had removed while it was
+// UNVERIFIED. Those claims are now the approved account, so this suite
+// pins the approved copy instead of forbidding it. Claims that contradict
+// the approved copy (the legacy site's "+40 años" variant) or that remain
+// unsupported (awards, certifications) stay forbidden.
 
-test("nosotros page asserts no years-of-operation, founding-date, headcount, award, or family-tradition claim", () => {
-  for (const needle of ["+40 años", "más de 40 años", "+30 años", "más de 30 años", "década", "tradición familiar", "familia", "fundad", "premio", "certificad"]) {
+test("nosotros page carries no claim contradicting or exceeding the approved history copy", () => {
+  for (const needle of ["+40 años", "más de 40 años", "premio", "certificad"]) {
     assert.equal(nosotrosSrc.toLowerCase().includes(needle.toLowerCase()), false, `unexpected unsupported claim "${needle}"`);
   }
 });
 
-test("nosotros page preserves the approved hero copy (location + hand-woven material claim already live before S4)", () => {
-  assert.match(nosotrosSrc, /Bucaramanga,\s*\n?\s*Colombia/);
-  assert.match(nosotrosSrc, /tejido a mano/);
+test("nosotros page renders the owner-approved history copy (2026-08 brand refresh)", () => {
+  assert.match(nosotrosSrc, /Más de 30 años tejiendo historias/);
+  assert.match(nosotrosSrc, /empresa familiar santandereana/);
+  assert.match(nosotrosSrc, /Ximena y\s*\n?\s*Mónica/);
+  assert.match(nosotrosSrc, /100% algodón/);
+  assert.match(nosotrosSrc, /Un legado familiar tejido con amor\./);
 });
 
-test("nosotros page's history section was removed cleanly, not left as an empty heading", () => {
-  assert.equal(nosotrosSrc.includes("historia-titulo"), false);
+test("nosotros page never resurrects the pre-refresh legacy history block's ids/copy", () => {
+  assert.equal(nosotrosSrc.includes("historia-titulo\""), false);
   assert.equal(nosotrosSrc.includes("Cada prenda, una historia"), false);
 });
 

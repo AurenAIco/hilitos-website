@@ -6,26 +6,28 @@
 // here — the public shell lives in app/(public)/layout.tsx and the future
 // admin boundary in app/(admin)/layout.tsx (see docs/OWNERSHIP.md).
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Hanken_Grotesk } from "next/font/google";
+import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
-// FONT SETUP (interim, documented — P1A pack §7.5 / OQ#2):
-// Fraunces (display) + Hanken Grotesk (body), both OFL-licensed, loaded via
+// FONT SETUP (2026-08 brand refresh, approved by Mónica/Juanpa):
+// Cormorant Garamond (display/emotional headings, SemiBold) + Montserrat
+// (body/nav/buttons/prices, Regular+Medium), both OFL-licensed, loaded via
 // next/font/google, which downloads and SELF-HOSTS the files at build time
 // (no runtime request to Google). If dedicated WOFF2 files + licenses are
 // later vendored, switch to next/font/local without changing the variable
 // names. Two families maximum; no script fonts. Fonts stay at ROOT so every
 // surface (public + admin) gets the token font variables.
-const fraunces = Fraunces({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  weight: ["500", "600"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
-const hankenGrotesk = Hanken_Grotesk({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-hanken-grotesk",
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -66,7 +68,7 @@ export const metadata: Metadata = {
 // background token. Not a new brand decision: reusing the existing frozen
 // token value for the browser-chrome theme color.
 export const viewport: Viewport = {
-  themeColor: "#F5EFE2",
+  themeColor: "#FFF9F5",
 };
 
 export default function RootLayout({
@@ -75,7 +77,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-CO" className={`${fraunces.variable} ${hankenGrotesk.variable} antialiased`}>
+    <html lang="es-CO" className={`${cormorant.variable} ${montserrat.variable} antialiased`}>
       <body>{children}</body>
     </html>
   );

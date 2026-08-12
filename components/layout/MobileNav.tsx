@@ -50,10 +50,11 @@ export function MobileNav() {
     focusables[0]?.focus();
 
     // If the viewport grows to the desktop breakpoint while the drawer is open,
-    // the md:hidden wrapper disappears via CSS but `open` would stay true and the
+    // the lg:hidden wrapper disappears via CSS but `open` would stay true and the
     // body scroll lock would leak. Close through the canonical close() so state,
     // scroll lock (restored by this effect's cleanup) and focus are all handled.
-    const desktopMq = window.matchMedia("(min-width: 768px)");
+    // 1024px matches Header's lg: desktop-nav breakpoint (five-item nav).
+    const desktopMq = window.matchMedia("(min-width: 1024px)");
     function onDesktopChange(event: MediaQueryListEvent) {
       if (event.matches) close();
     }
@@ -95,7 +96,7 @@ export function MobileNav() {
   }, [open, close]);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         ref={triggerRef}
         type="button"
@@ -116,7 +117,7 @@ export function MobileNav() {
 
       {open
         ? createPortal(
-            <div className="fixed inset-0 z-50 md:hidden">
+            <div className="fixed inset-0 z-50 lg:hidden">
               <button
                 type="button"
                 aria-hidden="true"

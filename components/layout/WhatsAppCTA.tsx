@@ -1,5 +1,8 @@
 // components/layout/WhatsAppCTA.tsx — AMARILLO. PRESENTATIONAL ONLY.
-// Renders the WhatsApp affordance with the RESERVED --whatsapp green.
+// 2026-08 brand refresh (approved by Mónica/Juanpa): WhatsApp CTAs use the
+// Hilitos treatment — dusty-pink outline on warm ivory, cacao label, the
+// recognizable WhatsApp glyph in dusty pink — never the WhatsApp brand
+// green (the --whatsapp token stays defined but is no longer used here).
 // Accepts an already-built href from a caller (lib/whatsapp.ts, Verde-owned).
 // This component must NEVER build the message, embed or guess a phone
 // number, or read process.env for WhatsApp configuration — and it must
@@ -8,9 +11,10 @@
 // it renders a disabled, non-interactive control instead of a clickable dead
 // end (slice S6).
 //
-// A11Y: label/icon use --tinta on --whatsapp (≈7.5:1). White-on-green fails
-// AA. The disabled state is exempt from that contrast requirement (WCAG
-// 1.4.11 excludes inactive UI components) but keeps layout/size identical.
+// A11Y: label uses --tinta (cacao #56372D) on --marfil (≈9.9:1); the icon is
+// decorative (aria-hidden) dusty pink. The disabled state is exempt from the
+// contrast requirement (WCAG 1.4.11 excludes inactive UI components) but
+// keeps layout/size identical.
 //
 // "use client" (final pre-launch value slice, Slice E): the only reason this
 // is a Client Component is the optional analytics click ping below — a
@@ -21,7 +25,7 @@
 
 import { track } from "@/lib/analytics";
 
-function WhatsAppIcon({ className = "" }: { className?: string }) {
+export function WhatsAppIcon({ className = "" }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -82,7 +86,7 @@ export function WhatsAppCTA({
 
   const content = (
     <>
-      <WhatsAppIcon />
+      <WhatsAppIcon className="text-barro" />
       <span className={compact ? "hidden sm:inline" : ""}>{label}</span>
       {compact ? <span className="sr-only sm:hidden">{label}</span> : null}
     </>
@@ -94,7 +98,7 @@ export function WhatsAppCTA({
         type="button"
         disabled
         aria-label={`${label} (no disponible por el momento)`}
-        className={`${sharedClassName} cursor-not-allowed bg-whatsapp/35 text-tinta/60`}
+        className={`${sharedClassName} cursor-not-allowed border border-hairline bg-crudo/50 text-tinta/50`}
       >
         {content}
       </button>
@@ -107,7 +111,7 @@ export function WhatsAppCTA({
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className={`${sharedClassName} bg-whatsapp text-tinta transition-opacity duration-[var(--duration-base)] hover:opacity-85`}
+      className={`${sharedClassName} border border-barro bg-marfil text-tinta transition-colors duration-[var(--duration-base)] hover:bg-crudo/60`}
     >
       {content}
     </a>

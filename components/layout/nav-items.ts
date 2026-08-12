@@ -23,7 +23,16 @@
 // one published design. Whether to add category links from /catalogo (or to
 // stop listing those routes in the sitemap) is an open pre-launch decision,
 // deliberately NOT made here.
+// 2026-08 brand refresh (approved by Mónica/Juanpa): final public nav is
+// Inicio | Catálogo | Personalizados | Nuestra historia | Contacto.
+// "Nuestra historia" keeps the existing /nosotros route (canonical URL
+// unchanged); "Contacto" targets the homepage contact section anchor;
+// /personalizados is a new frontend-only editorial route. No "Tienda", no
+// cart — WhatsApp is the conversion channel.
 export const NAV_ITEMS = [
+  { href: "/", label: "Inicio" },
   { href: "/catalogo", label: "Catálogo" },
-  { href: "/nosotros", label: "Nosotros" },
+  { href: "/personalizados", label: "Personalizados" },
+  { href: "/nosotros", label: "Nuestra historia" },
+  { href: "/#contacto", label: "Contacto" },
 ] as const;

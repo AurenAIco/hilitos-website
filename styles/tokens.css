@@ -5,7 +5,8 @@
  *   - Token NAMES and ROLES are frozen. Renaming or removing a token is a seam
  *     change requiring re-review (Violeta).
  *   - Token VALUES are seeded creative defaults, tunable by Violeta/Mónica
- *     without breaking consumers.
+ *     without breaking consumers. The 2026-08 brand-refresh values below are
+ *     the palette approved by Mónica/Juanpa (cacao / dusty pink / warm ivory).
  *   - Consumers (Amarillo/Verde) read these variables (directly or via the
  *     Tailwind theme mapping in app/globals.css) and MUST NOT hardcode raw
  *     hex/size values.
@@ -15,29 +16,33 @@
 
 :root {
   /* ---- Brand color tokens (NAMES FROZEN; values are creative defaults, tunable by Violeta/Mónica) ---- */
-  --marfil:       #F5EFE2; /* primary warm background (ivory) */
-  --crudo:        #E7DCC8; /* secondary raw-natural surface; the solid LQIP placeholder-box tone */
-  --tinta:        #2B2622; /* primary text (ink) */
-  --barro:        #B07C57; /* warm clay accent — DECORATIVE use only */
-  --barro-hondo:  #8A5A38; /* deep clay — INTERACTIVE / AA-critical text & controls (use instead of --barro when AA contrast is required) */
-  --hilo:         #9A8763; /* thread color — thread/stitch motif, hairlines, stitch underlines */
-  --sage:         #A7B39A; /* secondary natural accent */
-  --whatsapp:     #25D366; /* WhatsApp brand green — RESERVED exclusively for WhatsApp actions (exact brand value) */
+  --marfil:       #FFF9F5; /* primary warm background (warm ivory) */
+  --crudo:        #F5EAE0; /* secondary soft-beige surface; the solid LQIP placeholder-box tone */
+  --tinta:        #56372D; /* primary heading/strong text (cacao) */
+  --barro:        #D99A91; /* dusty-pink accent — DECORATIVE use only */
+  --barro-hondo:  #A05C52; /* deep dusty rose — INTERACTIVE / AA-critical text & controls (use instead of --barro when AA contrast is required) */
+  --hilo:         #C7A197; /* thread color — thread/stitch motif, hairlines, stitch underlines */
+  --sage:         #EAD9CE; /* secondary soft warm accent surface */
+  --whatsapp:     #25D366; /* WhatsApp brand green — token retained for reference; brand-refresh CTAs use the Hilitos pink treatment instead */
+
+  /* ---- Brand-refresh additions (additive; approved 2026-08 palette) ---- */
+  --rosa-boton:       #D58F86; /* primary button fill */
+  --rosa-boton-hover: #C67F76; /* primary button hover — slightly darker, same muted family */
 
   /* ---- Functional aliases (foundation-added; documented; keep the reserved semantics) ---- */
   --surface:      var(--marfil);
   --surface-raw:  var(--crudo);
   --text:         var(--tinta);
-  --text-muted:   #6B635A;                 /* derived muted ink — tunable */
-  --hairline:     rgba(43, 38, 34, 0.12);  /* subtle rule/border */
+  --text-muted:   #625752;                 /* normal body text — approved value */
+  --hairline:     rgba(86, 55, 45, 0.14);  /* subtle rule/border, keyed to cacao */
   --focus-ring:   var(--barro-hondo);      /* AA-critical focus color */
 
   /* ---- Typography ----
-   * --font-fraunces / --font-hanken-grotesk are provided by next/font in
+   * --font-cormorant / --font-montserrat are provided by next/font in
    * app/layout.tsx (self-hosted at build time). The var() fallbacks keep these
    * tokens meaningful even if the loader is absent. */
-  --font-display: var(--font-fraunces, "Fraunces"), Georgia, "Times New Roman", serif;
-  --font-body:    var(--font-hanken-grotesk, "Hanken Grotesk"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-cormorant, "Cormorant Garamond"), Georgia, "Times New Roman", serif;
+  --font-body:    var(--font-montserrat, "Montserrat"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --text-xs:      0.75rem;
   --text-sm:      0.875rem;
@@ -69,10 +74,10 @@
   /* ---- Radii ---- */
   --radius-none: 0; --radius-sm: 0.25rem; --radius-md: 0.5rem; --radius-lg: 0.875rem; --radius-pill: 999px;
 
-  /* ---- Elevation (soft, warm, restrained) ---- */
-  --shadow-sm: 0 1px 2px rgba(43, 38, 34, 0.06);
-  --shadow-md: 0 4px 16px rgba(43, 38, 34, 0.08);
-  --shadow-lg: 0 12px 32px rgba(43, 38, 34, 0.10);
+  /* ---- Elevation (soft, warm, restrained; keyed to cacao) ---- */
+  --shadow-sm: 0 1px 2px rgba(86, 55, 45, 0.06);
+  --shadow-md: 0 4px 16px rgba(86, 55, 45, 0.08);
+  --shadow-lg: 0 12px 32px rgba(86, 55, 45, 0.10);
 
   /* ---- Motion (tokens only; the reduced-motion IMPLEMENTATION is Amarillo's) ---- */
   --duration-fast: 150ms; --duration-base: 250ms; --duration-slow: 400ms;
