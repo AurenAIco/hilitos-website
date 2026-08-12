@@ -56,7 +56,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: { absolute: "Hilitos — Ropita que cuida con amor" },
   description:
-    "Ropita artesanal para recién nacidos y bebés de 0, 3 y 6 meses. Elaborada artesanalmente en Bucaramanga, Santander, con 100% algodón.",
+    "Ropita artesanal para recién nacidos y bebés de 0, 3 y 6 meses. Elaborada artesanalmente en Bucaramanga, Santander.",
   alternates: {
     canonical: resolveSiteUrl().origin,
   },
@@ -87,8 +87,7 @@ export default async function HomePage() {
               <br />
               y bebés de 0, 3 y 6 meses.
               <br />
-              Elaborada artesanalmente en Bucaramanga, Santander, con 100%
-              algodón.
+              Elaborada artesanalmente en Bucaramanga, Santander.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button href="/catalogo" className="tracking-[0.08em]">
