@@ -3,10 +3,8 @@
 // routes to the dedicated Nuestra historia page (/nosotros — canonical URL
 // unchanged).
 //
-// DRAFT ASSET: the approved direction asks for an artisanal work / knitting
-// machine photograph here. No such photo exists in the repo yet, so the
-// closest local approved image (craft-1: visible hand-smocked stitchwork)
-// holds the slot. Replacing it later means changing ONLY the constant below.
+// Knitting-machine photograph supplied by Mónica (pre-PR polish pass,
+// 2026-08). Replacing it later means changing ONLY the constant below.
 import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -14,8 +12,8 @@ import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 
 const HISTORY_IMAGE = {
-  src: "/brand/craft-1.jpg", // DRAFT — swap for the knitting-machine/artisanal photo when supplied
-  alt: "Detalle de prenda tejida con bordado artesanal",
+  src: "/brand/proceso-tejido.jpg",
+  alt: "Manos trabajando una máquina tejedora con hilo rosado",
 };
 
 export function HistoryTeaser() {

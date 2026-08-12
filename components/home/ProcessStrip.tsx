@@ -1,11 +1,15 @@
 // components/home/ProcessStrip.tsx — "Del hilo a sus primeros días"
 // (2026-08 brand refresh §14). Four approved stages, copy verbatim.
 //
-// DRAFT ASSETS: final process photography is not in the repo yet. Each stage
-// holds its image in the STAGES constant below so replacing one later means
-// swapping ONLY that src string — the component itself never needs to
-// change. Current slots reuse the four approved local brand photos as
-// temporary drafts (no scraped/downloaded stand-ins).
+// Each stage holds its image in the STAGES constant below so replacing one
+// later means swapping ONLY that src string — the component itself never
+// needs to change.
+//
+// CERRAMOS A MANO and CUIDAMOS CADA DETALLE now use real process photography
+// supplied by Mónica (pre-PR polish pass, 2026-08). TEJEMOS remains a DRAFT:
+// the one supplied knitting-machine photo was placed in HistoryTeaser
+// instead (same homepage, more prominent slot, and the more literal request)
+// — reusing it here too would duplicate the same image twice in one scroll.
 import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
@@ -15,20 +19,20 @@ const STAGES = [
   {
     title: "TEJEMOS",
     body: "Con hilo 100% algodón de la mejor calidad.",
-    src: "/brand/hero.jpg", // DRAFT — swap for knitting-machine photo when supplied
+    src: "/brand/hero.jpg", // DRAFT — swap for a second, distinct knitting-machine photo when supplied
     alt: "Prenda tejida en hilo suave para bebé",
   },
   {
     title: "CERRAMOS A MANO",
     body: "Cada pieza es unida con paciencia y dedicación.",
-    src: "/brand/craft-1.jpg", // DRAFT — swap for hand-closing/cerradoras photo when supplied
-    alt: "Detalle de costura y bordado artesanal",
+    src: "/brand/proceso-cierre-manual.jpg",
+    alt: "Manos cerrando y rematando a mano una prenda tejida rosada",
   },
   {
     title: "CUIDAMOS CADA DETALLE",
     body: "Revisamos y preparamos cada prenda para que llegue perfecta a ti.",
-    src: "/brand/craft-2.jpg", // DRAFT — swap for detail/quality-check photo when supplied
-    alt: "Prenda tejida con cuello bordado y lazo",
+    src: "/brand/proceso-detalle-final.jpg",
+    alt: "Manos revisando de cerca el tejido, el bordado y el lazo de una prenda rosada",
   },
   {
     title: "LLEGA A TU BEBÉ",

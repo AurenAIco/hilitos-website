@@ -21,7 +21,7 @@ const TESTIMONIALS = [
   {
     name: "YULLY",
     quote:
-      "Mi pedido llegó hermoso y la tela es súper suave. Una vez más quedé 100% complacida, tanto por la calidad como por el excelente servicio.",
+      "Mi pedido llegó hermoso y el tejido es súper suave. Una vez más quedé 100% complacida, tanto por la calidad como por el excelente servicio.",
   },
   {
     name: "LAURA",

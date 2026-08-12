@@ -103,8 +103,8 @@ export default async function HomePage() {
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
-              src="/brand/hero.jpg"
-              alt="Conjunto de ajuar tejido para bebé sobre manta clara"
+              src="/brand/hero-inicio.jpg"
+              alt="Bebé recostada en su cuna con conjunto tejido rosado, diadema con lazo y conejito de peluche tejido"
               fill
               priority
               sizes="(min-width: 768px) 50vw, 100vw"
