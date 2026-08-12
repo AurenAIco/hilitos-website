@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s · Hilitos",
   },
   description:
-    "Ropita artesanal para recién nacidos y bebés de 0, 3 y 6 meses. Hecha en Santander con 100% algodón.",
+    "Ropita artesanal para recién nacidos y bebés de 0, 3 y 6 meses. Elaborada artesanalmente en Bucaramanga, Santander, con 100% algodón.",
   openGraph: {
     siteName: "Hilitos",
     locale: "es_CO",

@@ -7,6 +7,7 @@
 // admin boundary in app/(admin)/layout.tsx (see docs/OWNERSHIP.md).
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
 
@@ -78,7 +79,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-CO" className={`${cormorant.variable} ${montserrat.variable} antialiased`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel Web Analytics — a truly-global concern (page views across
+         * every surface), so it belongs at this root per this file's own rule
+         * above rather than in app/(public)/layout.tsx. Injects a script only
+         * when deployed on Vercel; it is a no-op in local development and
+         * reads no request/user data of its own. */}
+        <Analytics />
+      </body>
     </html>
   );
 }
