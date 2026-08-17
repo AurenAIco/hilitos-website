@@ -72,9 +72,10 @@ export function Footer() {
             <WhatsAppCTA href={buildGenericWhatsAppHref()} analyticsSource="footer" />
           </div>
         </div>
-        <p className="mt-12 border-t border-hairline pt-6 text-xs text-text-muted">
-          © {new Date().getFullYear()} Hilitos
-        </p>
+        <div className="mt-12 flex flex-col gap-2 border-t border-hairline pt-6 text-xs text-text-muted md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Hilitos</p>
+          <p>Powered by AURENA AI</p>
+        </div>
       </div>
     </footer>
   );
