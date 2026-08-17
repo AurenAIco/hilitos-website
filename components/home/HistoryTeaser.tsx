@@ -10,20 +10,27 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 const HISTORY_IMAGE = {
   src: "/brand/proceso-tejido.jpg",
   alt: "Manos trabajando una máquina tejedora con hilo rosado",
 };
 
-export function HistoryTeaser() {
+export async function HistoryTeaser() {
+  // IMG-S8B3 — empty/failed override map resolves back to HISTORY_IMAGE
+  // unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+  const image = resolveSiteImage("home_history_teaser", HISTORY_IMAGE.src, HISTORY_IMAGE.alt, siteImages);
+
   return (
     <Section bleed labelledBy="historia-corta-titulo" className="bg-crudo/40">
       <Container className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
         <div className="relative order-last aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo md:order-first">
           <Image
-            src={HISTORY_IMAGE.src}
-            alt={HISTORY_IMAGE.alt}
+            src={image.src}
+            alt={image.alt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover object-center"

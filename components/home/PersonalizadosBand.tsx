@@ -11,13 +11,25 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 const PERSONALIZADOS_IMAGE = {
   src: "/brand/craft-2.jpg", // DRAFT — swap for name-embroidery photo when supplied
   alt: "Prenda tejida con cuello bordado a mano",
 };
 
-export function PersonalizadosBand() {
+export async function PersonalizadosBand() {
+  // IMG-S8B3 — empty/failed override map resolves back to
+  // PERSONALIZADOS_IMAGE unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+  const image = resolveSiteImage(
+    "home_personalizados_band",
+    PERSONALIZADOS_IMAGE.src,
+    PERSONALIZADOS_IMAGE.alt,
+    siteImages,
+  );
+
   return (
     <Section bleed labelledBy="personalizados-titulo" className="bg-sage/40">
       <Container className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
@@ -40,8 +52,8 @@ export function PersonalizadosBand() {
         </div>
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
           <Image
-            src={PERSONALIZADOS_IMAGE.src}
-            alt={PERSONALIZADOS_IMAGE.alt}
+            src={image.src}
+            alt={image.alt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover object-center"

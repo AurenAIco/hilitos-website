@@ -7,20 +7,27 @@ import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 const REGALOS_IMAGE = {
   src: "/brand/hero.jpg", // DRAFT — swap for gift/ajuar packaging photo when supplied
   alt: "Conjunto de ajuar tejido para bebé sobre manta clara",
 };
 
-export function RegalosBand() {
+export async function RegalosBand() {
+  // IMG-S8B3 — empty/failed override map resolves back to REGALOS_IMAGE
+  // unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+  const image = resolveSiteImage("home_regalos_band", REGALOS_IMAGE.src, REGALOS_IMAGE.alt, siteImages);
+
   return (
     <Section labelledBy="regalos-titulo">
       <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
         <div className="relative order-last aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo md:order-first">
           <Image
-            src={REGALOS_IMAGE.src}
-            alt={REGALOS_IMAGE.alt}
+            src={image.src}
+            alt={image.alt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover object-center"
