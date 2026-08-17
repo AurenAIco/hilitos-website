@@ -14,6 +14,8 @@ import Image from "next/image";
 import { Section } from "@/components/ui/Section";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 const STAGES = [
   {
@@ -21,60 +23,71 @@ const STAGES = [
     body: "Con hilo 100% algodón de la mejor calidad.",
     src: "/brand/hero.jpg", // DRAFT — swap for a second, distinct knitting-machine photo when supplied
     alt: "Prenda tejida en hilo suave para bebé",
+    slot: "home_process_knitting",
   },
   {
     title: "CERRAMOS A MANO",
     body: "Cada pieza es unida con paciencia y dedicación.",
     src: "/brand/proceso-cierre-manual.jpg",
     alt: "Manos cerrando y rematando a mano una prenda tejida rosada",
+    slot: "home_process_hand_finishing",
   },
   {
     title: "CUIDAMOS CADA DETALLE",
     body: "Revisamos y preparamos cada prenda para que llegue perfecta a ti.",
     src: "/brand/proceso-detalle-final.jpg",
     alt: "Manos revisando de cerca el tejido, el bordado y el lazo de una prenda rosada",
+    slot: "home_process_quality_check",
   },
   {
     title: "LLEGA A TU BEBÉ",
     body: "Para acompañar sus primeros días y momentos inolvidables.",
     src: "/brand/nosotros.jpg",
     alt: "Bebé recién nacido con prenda y gorro tejidos",
+    slot: "home_process_arrival",
   },
 ] as const;
 
-export function ProcessStrip() {
+export async function ProcessStrip() {
+  // IMG-S8B3 — empty/failed override map resolves every stage photo back to
+  // its bundled src/alt unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+
   return (
     <Section labelledBy="proceso-titulo">
       <EditorialHeading as="h2" id="proceso-titulo" className="text-3xl">
         Del hilo a sus primeros días
       </EditorialHeading>
       <ol className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-        {STAGES.map((stage, i) => (
-          <li key={stage.title} className="min-w-0">
-            <Reveal delayMs={i * 90}>
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
-                <Image
-                  src={stage.src}
-                  alt={stage.alt}
-                  fill
-                  sizes="(min-width: 1024px) 25vw, 50vw"
-                  className="object-cover object-center"
-                />
-              </div>
-              <div className="mt-4 flex items-baseline gap-3">
-                <span aria-hidden="true" className="font-display text-2xl text-barro">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="text-sm font-medium tracking-[0.1em] text-tinta">
-                  {stage.title}
-                </h3>
-              </div>
-              <p className="mt-1.5 text-sm leading-[var(--leading-relaxed)] text-text-muted">
-                {stage.body}
-              </p>
-            </Reveal>
-          </li>
-        ))}
+        {STAGES.map((stage, i) => {
+          const image = resolveSiteImage(stage.slot, stage.src, stage.alt, siteImages);
+          return (
+            <li key={stage.title} className="min-w-0">
+              <Reveal delayMs={i * 90}>
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 50vw"
+                    className="object-cover object-center"
+                  />
+                </div>
+                <div className="mt-4 flex items-baseline gap-3">
+                  <span aria-hidden="true" className="font-display text-2xl text-barro">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="text-sm font-medium tracking-[0.1em] text-tinta">
+                    {stage.title}
+                  </h3>
+                </div>
+                <p className="mt-1.5 text-sm leading-[var(--leading-relaxed)] text-text-muted">
+                  {stage.body}
+                </p>
+              </Reveal>
+            </li>
+          );
+        })}
       </ol>
     </Section>
   );

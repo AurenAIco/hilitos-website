@@ -20,6 +20,8 @@ import { MascotSlot } from "@/components/editorial/MascotSlot";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
 import { buildGenericWhatsAppHref } from "@/lib/whatsapp";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 export const metadata: Metadata = {
   title: "Nuestra historia",
@@ -51,7 +53,24 @@ const HISTORIA_IMAGES = {
   },
 } as const;
 
-export default function NosotrosPage() {
+export default async function NosotrosPage() {
+  // IMG-S8B3 — empty/failed override map resolves every image below back to
+  // its bundled HISTORIA_IMAGES entry unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+  const heroImage = resolveSiteImage("nosotros_hero", HISTORIA_IMAGES.hero.src, HISTORIA_IMAGES.hero.alt, siteImages);
+  const procesoImage = resolveSiteImage(
+    "nosotros_process",
+    HISTORIA_IMAGES.proceso.src,
+    HISTORIA_IMAGES.proceso.alt,
+    siteImages,
+  );
+  const materialImage = resolveSiteImage(
+    "nosotros_material",
+    HISTORIA_IMAGES.material.src,
+    HISTORIA_IMAGES.material.alt,
+    siteImages,
+  );
+
   return (
     <main id="contenido" tabIndex={-1}>
       {/* Apertura */}
@@ -72,8 +91,8 @@ export default function NosotrosPage() {
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
-              src={HISTORIA_IMAGES.hero.src}
-              alt={HISTORIA_IMAGES.hero.alt}
+              src={heroImage.src}
+              alt={heroImage.alt}
               fill
               priority
               sizes="(min-width: 768px) 50vw, 100vw"
@@ -108,8 +127,8 @@ export default function NosotrosPage() {
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
           <div className="relative order-last aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo md:order-first">
             <Image
-              src={HISTORIA_IMAGES.proceso.src}
-              alt={HISTORIA_IMAGES.proceso.alt}
+              src={procesoImage.src}
+              alt={procesoImage.alt}
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover object-center"
@@ -146,8 +165,8 @@ export default function NosotrosPage() {
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
-              src={HISTORIA_IMAGES.material.src}
-              alt={HISTORIA_IMAGES.material.alt}
+              src={materialImage.src}
+              alt={materialImage.alt}
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover object-center"

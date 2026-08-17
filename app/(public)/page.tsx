@@ -26,6 +26,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getFeaturedDesigns, getStorefrontCatalog } from "@/lib/catalog/storefront";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { EditorialHeading } from "@/components/editorial/EditorialHeading";
@@ -70,6 +72,18 @@ export default async function HomePage() {
       : [];
   const freshCatalog = result.status === "ok" ? result.catalog : null;
 
+  // IMG-S8B3 — managed editorial image overrides. Empty map (network error,
+  // missing backend URL, no rows, malformed response, …) resolves every
+  // slot below back to its bundled fallback unchanged — see
+  // lib/catalog/siteImages.ts's ZERO-VISIBLE-CHANGE INVARIANT.
+  const siteImages = await getStorefrontSiteImages();
+  const hero = resolveSiteImage(
+    "home_hero",
+    "/brand/hero-inicio.jpg",
+    "Bebé recostada en su cuna con conjunto tejido rosado, diadema con lazo y conejito de peluche tejido",
+    siteImages,
+  );
+
   return (
     <main id="contenido" tabIndex={-1}>
       {/* 2 · Hero — editorial text left, large photography right (§9).
@@ -103,8 +117,8 @@ export default async function HomePage() {
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
-              src="/brand/hero-inicio.jpg"
-              alt="Bebé recostada en su cuna con conjunto tejido rosado, diadema con lazo y conejito de peluche tejido"
+              src={hero.src}
+              alt={hero.alt}
               fill
               priority
               sizes="(min-width: 768px) 50vw, 100vw"

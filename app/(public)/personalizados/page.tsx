@@ -11,6 +11,8 @@ import { EditorialHeading } from "@/components/editorial/EditorialHeading";
 import { WhatsAppCTA } from "@/components/layout/WhatsAppCTA";
 import { buildPersonalizadosWhatsAppHref } from "@/lib/whatsapp";
 import { resolveSiteUrl } from "@/lib/seo/siteUrl";
+import { getStorefrontSiteImages } from "@/lib/catalog/siteImages";
+import { resolveSiteImage } from "@/lib/catalog/resolveSiteImage";
 
 export const metadata: Metadata = {
   title: "Personalizados",
@@ -30,8 +32,18 @@ const PERSONALIZADOS_IMAGE = {
   alt: "Prenda tejida con cuello bordado a mano",
 };
 
-export default function PersonalizadosPage() {
+export default async function PersonalizadosPage() {
   const whatsappHref = buildPersonalizadosWhatsAppHref();
+
+  // IMG-S8B3 — empty/failed override map resolves back to
+  // PERSONALIZADOS_IMAGE unchanged (see lib/catalog/siteImages.ts).
+  const siteImages = await getStorefrontSiteImages();
+  const image = resolveSiteImage(
+    "personalizados_hero",
+    PERSONALIZADOS_IMAGE.src,
+    PERSONALIZADOS_IMAGE.alt,
+    siteImages,
+  );
 
   return (
     <main id="contenido" tabIndex={-1}>
@@ -59,8 +71,8 @@ export default function PersonalizadosPage() {
           </div>
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-crudo">
             <Image
-              src={PERSONALIZADOS_IMAGE.src}
-              alt={PERSONALIZADOS_IMAGE.alt}
+              src={image.src}
+              alt={image.alt}
               fill
               priority
               sizes="(min-width: 768px) 50vw, 100vw"
